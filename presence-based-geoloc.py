@@ -7,6 +7,7 @@ from geopy import Point
 from datetime import datetime
 from ripe.atlas.cousteau import ProbeRequest
 import numpy as np
+import geoip2.database
 from ripe.atlas.cousteau import (
   Ping,
   AtlasCreateRequest,
@@ -41,9 +42,6 @@ def on_result_response(*args):
         location_rtt[location] = list()
     if min_rtt != sys.maxint:
         location_rtt[location].append(min_rtt)
-
-
-ATLAS_API_KEY = "<ATLAS_KEY>"
 
 class PythonObjectEncoder(JSONEncoder):
     def default(self, obj):
@@ -84,6 +82,8 @@ target_asn = int(sys.argv[2])
 probes_num = int(sys.argv[3])
 packets_num = int(sys.argv[4])
 
+ATLAS_API_KEY = sys.argv[5]
+
 ping = Ping(af=4, target=target_ip, description="Presence-informed RTT geolocation", packets=packets_num)
 
 asn_location = set()
@@ -103,8 +103,8 @@ for ix_object in ix["data"]:
 netfac = get_request("netfac")
 for netfac_object in netfac["data"]:
     if netfac_object["local_asn"] == target_asn:
-        city = netfac_object["city"]
-        country = netfac_object["country"]
+        city = netfac_object["city"].lower()
+        country = netfac_object["country"].lower()
         location = "%s|%s" % (city, country)
         asn_location.add(location)
 
@@ -114,10 +114,35 @@ for netixlan_object in netixlan["data"]:
     if netixlan_object["asn"] == target_asn:
         ix_id = netixlan_object["ix_id"]
         ix_object = id_ix_mapping[ix_id]
-        city = ix_object.city
-        country = ix_object.country
+        city = ix_object.city.lower()
+        country = ix_object.country.lower()
         location = "%s|%s" % (city, country)
         asn_location.add(location)
+
+# Get the possible location according to MaxMind
+reader = geoip2.database.Reader('geolocation/GeoLite2-City.mmdb')
+response = reader.city(target_ip)
+maxmind_city = response.city.name
+maxmind_country = response.country.iso_code.lower()
+print type(maxmind_country)
+# if maxmind indicates a country but the city is 'none', find the city with the largest population in that country
+if str(maxmind_city) == "None" and str(maxmind_country) != "None":
+    with gzip.open("geolocation/worldcitiespop.txt.gz") as fin:
+        maxmind_city = None
+        largest_city_pop = 0
+        for line in fin:
+            lf = line.strip().split(",")
+            if len(lf) > 0 and maxmind_country.lower() == lf[0]:
+                try:
+                    if int(lf[4]) > largest_city_pop:
+                        largest_city_pop = int(lf[4])
+                        maxmind_city = lf[1]
+                        print largest_city_pop
+                except ValueError, e:
+                    continue
+
+maxmind_location = "%s|%s" % (maxmind_city, maxmind_country)
+asn_location.add(maxmind_location)
 
 print "Possible locations according to PeeringDB:"
 for location in asn_location:
@@ -129,7 +154,7 @@ with open("geolocation/world_cities.csv", "r") as fin:
     for line in fin:
         lf = line.strip().split(",")
         if len(lf) > 0:
-            location = "%s|%s" % (lf[0], lf[6])
+            location = "%s|%s" % (lf[0].lower(), lf[6].lower())
             city_coordinates[location] = (lf[3], lf[2]) # long, lat
 
 candidate_probes = dict()
@@ -138,8 +163,8 @@ for location in asn_location:
     candidate_probes[location] = set()
     if location not in city_coordinates: continue
     coordinates = city_coordinates[location]
-    city = location.split("|")[0]
-    country = location.split("|")[1]
+    city = location.split("|")[0].lower()
+    country = location.split("|")[1].lower()
     # Get the probes in the same city
     filters = {"country_code": country, "status": 1}
     probes = ProbeRequest(**filters)
@@ -205,10 +230,11 @@ atlas_stream.disconnect()
 prv_median_min_rtt = sys.maxint
 closest_location = "undecided"
 for location in location_rtt:
-    data = np.array(location_rtt[location])
-    median_min_rtt = np.median(data)
-    if median_min_rtt < prv_median_min_rtt:
-        prv_median_min_rtt = median_min_rtt
+    #data = np.array(location_rtt[location])
+    #min_rtt = np.median(data)
+    min_rtt = min(location_rtt[location])
+    if min_rtt < prv_median_min_rtt:
+        prv_median_min_rtt = min_rtt
         closest_location = location
 
 if prv_median_min_rtt < 10:
