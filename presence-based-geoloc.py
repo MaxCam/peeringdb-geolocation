@@ -1,4 +1,4 @@
-# coding=utf-8
+# coding=latin-1
 import requests, time, sys, pickle, gzip, random
 from json import dumps, loads, JSONEncoder, JSONDecoder
 from collections import OrderedDict
@@ -17,8 +17,6 @@ from ripe.atlas.cousteau import (
 
 import requests.packages.urllib3
 requests.packages.urllib3.disable_warnings()
-reload(sys)
-sys.setdefaultencoding("utf-8")
 
 
 def on_result_response(*args):
@@ -42,6 +40,7 @@ def on_result_response(*args):
         location_rtt[location] = list()
     if min_rtt != sys.maxint:
         location_rtt[location].append(min_rtt)
+
 
 class PythonObjectEncoder(JSONEncoder):
     def default(self, obj):
@@ -81,7 +80,6 @@ target_ip = sys.argv[1]
 target_asn = int(sys.argv[2])
 probes_num = int(sys.argv[3])
 packets_num = int(sys.argv[4])
-
 ATLAS_API_KEY = sys.argv[5]
 
 ping = Ping(af=4, target=target_ip, description="Presence-informed RTT geolocation", packets=packets_num)
