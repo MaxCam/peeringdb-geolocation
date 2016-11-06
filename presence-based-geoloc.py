@@ -4,17 +4,18 @@ from json import dumps, loads, JSONEncoder, JSONDecoder
 from collections import OrderedDict
 from geopy import distance
 from geopy import Point
+from geopy.geocoders import Nominatim
 from datetime import datetime
-from ripe.atlas.cousteau import ProbeRequest
 import numpy as np
 import geoip2.database
 from ripe.atlas.cousteau import (
   Ping,
   AtlasCreateRequest,
   AtlasSource,
-  AtlasStream
+  AtlasStream,
+  ProbeRequest
 )
-
+from ripe.atlas.cousteau.source import MalFormattedSource
 import requests.packages.urllib3
 requests.packages.urllib3.disable_warnings()
 
@@ -28,7 +29,7 @@ def on_result_response(*args):
     global probe_location
     min_rtt = sys.maxint
     result = args[0]['result']
-    print result
+    print probe_location[args[0]["prb_id"]], result
     for reply in result:
         if "rtt" in reply:
             rtt = reply["rtt"]
@@ -96,6 +97,7 @@ for ix_object in ix["data"]:
     ix_id_mapping[ix_object["name"].strip().encode("utf-8")] = ix_object["id"]
     id_ix_mapping[ix_object["id"]] = ixp
 
+country_presences = dict()
 
 # Get cities where the ASN has facility presences
 netfac = get_request("netfac")
@@ -105,6 +107,9 @@ for netfac_object in netfac["data"]:
         country = netfac_object["country"].lower()
         location = "%s|%s" % (city, country)
         asn_location.add(location)
+        if country not in country_presences:
+            country_presences[country] = list()
+        country_presences[country].append(city)
 
 # Get the cities where the ASN has IXP presences
 netixlan = get_request("netixlan")
@@ -116,13 +121,18 @@ for netixlan_object in netixlan["data"]:
         country = ix_object.country.lower()
         location = "%s|%s" % (city, country)
         asn_location.add(location)
+        if country not in country_presences:
+            country_presences[country] = list()
+        country_presences[country].append(city)
 
 # Get the possible location according to MaxMind
 reader = geoip2.database.Reader('geolocation/GeoLite2-City.mmdb')
 response = reader.city(target_ip)
 maxmind_city = response.city.name
+if maxmind_city is not None:
+    maxmind_city = maxmind_city.lower()
 maxmind_country = response.country.iso_code.lower()
-print type(maxmind_country)
+
 # if maxmind indicates a country but the city is 'none', find the city with the largest population in that country
 if str(maxmind_city) == "None" and str(maxmind_country) != "None":
     with gzip.open("geolocation/worldcitiespop.txt.gz") as fin:
@@ -130,17 +140,20 @@ if str(maxmind_city) == "None" and str(maxmind_country) != "None":
         largest_city_pop = 0
         for line in fin:
             lf = line.strip().split(",")
-            if len(lf) > 0 and maxmind_country.lower() == lf[0]:
+            if len(lf) > 0 and maxmind_country == lf[0]:
                 try:
                     if int(lf[4]) > largest_city_pop:
                         largest_city_pop = int(lf[4])
-                        maxmind_city = lf[1]
+                        maxmind_city = lf[1].lower()
                         print largest_city_pop
                 except ValueError, e:
                     continue
 
 maxmind_location = "%s|%s" % (maxmind_city, maxmind_country)
 asn_location.add(maxmind_location)
+if maxmind_country not in country_presences:
+    country_presences[maxmind_country] = list()
+country_presences[maxmind_country].append(maxmind_city)
 
 print "Possible locations according to PeeringDB:"
 for location in asn_location:
@@ -155,14 +168,21 @@ with open("geolocation/world_cities.csv", "r") as fin:
             location = "%s|%s" % (lf[0].lower(), lf[6].lower())
             city_coordinates[location] = (lf[3], lf[2]) # long, lat
 
+# Order countries by number of presences to find the main country from which we start the measurements
+
+target_asn_probes = set()
 candidate_probes = dict()
 probe_location = dict()
+geolocator = Nominatim() # The geopy geolocator
 for location in asn_location:
+    location = location.lower()
     candidate_probes[location] = set()
-    if location not in city_coordinates: continue
+    if location not in city_coordinates:
+        print "We do not have the coordinates for the location: %s" % location
+        continue
     coordinates = city_coordinates[location]
-    city = location.split("|")[0].lower()
-    country = location.split("|")[1].lower()
+    city = location.split("|")[0]
+    country = location.split("|")[1]
     # Get the probes in the same city
     filters = {"country_code": country, "status": 1}
     probes = ProbeRequest(**filters)
@@ -171,12 +191,17 @@ for location in asn_location:
         if probe["asn_v4"] is not None and probe["geometry"]["type"] == "Point":
             probe_lon = probe["geometry"]["coordinates"][0]
             probe_lat = probe["geometry"]["coordinates"][1]
-            p1 = Point("%s %s" % (coordinates[0], coordinates[1]))
-            p2 = Point("%s %s" % (probe_lon, probe_lat))
-            result = distance.distance(p1, p2).kilometers
-            if result <= 40:
-                candidate_probes[location].add(probe["id"])
-                probe_location[probe["id"]] = location
+            if probe["asn_v4"] == target_asn:
+                target_asn_probes.add(probe["id"])
+                reverse_location = geolocator.reverse("%s, %s" % (probe_lat, probe_lon), language='en')
+                probe_location[probe["id"]] = reverse_location.address
+            else:
+                p1 = Point("%s %s" % (coordinates[0], coordinates[1]))
+                p2 = Point("%s %s" % (probe_lon, probe_lat))
+                result = distance.distance(p1, p2).kilometers
+                if result <= 40:
+                    candidate_probes[location].add(probe["id"])
+                    probe_location[probe["id"]] = location
 
 selected_probes = set()
 location_rtt = dict()
@@ -190,6 +215,8 @@ for location in asn_location:
             selected_probes |= set(candidate_probes[location])
         else:
             selected_probes |= set(random.sample(candidate_probes[location], probes_num))
+
+selected_probes |= target_asn_probes
 
 source = AtlasSource(
     value=','.join(str(x) for x in selected_probes),
@@ -205,37 +232,41 @@ atlas_request = AtlasCreateRequest(
     is_oneoff=True
 )
 
-(is_success, response) = atlas_request.create()
+try:
+    (is_success, response) = atlas_request.create()
 
-measurement_id = response["measurements"][0]
+    measurement_id = response["measurements"][0]
 
-atlas_stream = AtlasStream()
-atlas_stream.connect()
-# Measurement results
-channel = "result"
-# Bind function we want to run with every result message received
-atlas_stream.bind_channel(channel, on_result_response)
-# Subscribe to new stream for 1001 measurement results
-stream_parameters = {"msm": measurement_id}
-atlas_stream.start_stream(stream_type="result", **stream_parameters)
+    atlas_stream = AtlasStream()
+    atlas_stream.connect()
+    # Measurement results
+    channel = "result"
+    # Bind function we want to run with every result message received
+    atlas_stream.bind_channel(channel, on_result_response)
+    # Subscribe to new stream for 1001 measurement results
+    stream_parameters = {"msm": measurement_id}
+    atlas_stream.start_stream(stream_type="result", **stream_parameters)
 
-# Timeout all subscriptions after 5 secs. Leave seconds empty for no timeout.
-# Make sure you have this line after you start *all* your streams
-atlas_stream.timeout(seconds=120)
-# Shut down everything
-atlas_stream.disconnect()
+    # Timeout all subscriptions after 5 secs. Leave seconds empty for no timeout.
+    # Make sure you have this line after you start *all* your streams
+    atlas_stream.timeout(seconds=120)
+    # Shut down everything
+    atlas_stream.disconnect()
 
-prv_median_min_rtt = sys.maxint
-closest_location = "undecided"
-for location in location_rtt:
-    #data = np.array(location_rtt[location])
-    #min_rtt = np.median(data)
-    min_rtt = min(location_rtt[location])
-    if min_rtt < prv_median_min_rtt:
-        prv_median_min_rtt = min_rtt
-        closest_location = location
+    prv_median_min_rtt = sys.maxint
+    closest_location = "undecided"
+    for location in location_rtt:
+        #data = np.array(location_rtt[location])
+        #min_rtt = np.median(data)
+        min_rtt = min(location_rtt[location])
+        if min_rtt < prv_median_min_rtt:
+            prv_median_min_rtt = min_rtt
+            closest_location = location
 
-if prv_median_min_rtt < 10:
-    print target_ip, closest_location, prv_median_min_rtt
-else:
-    print "Error: Couldn't converge to a target. Possibly incomplete presence data"
+    if prv_median_min_rtt < 10:
+        print target_ip, closest_location, prv_median_min_rtt
+    else:
+        print "Error: Couldn't converge to a target. Possibly incomplete presence data"
+
+except MalFormattedSource, e:
+    print "Unable to create Atlas measurement. Error:\n%s\n" % str(e)
