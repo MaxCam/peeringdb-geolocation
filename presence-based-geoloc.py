@@ -18,7 +18,7 @@ from ripe.atlas.cousteau import (
 from ripe.atlas.cousteau.source import MalFormattedSource
 import requests.packages.urllib3
 requests.packages.urllib3.disable_warnings()
-
+import PeeringDB
 
 def on_result_response(*args):
     """
@@ -49,33 +49,6 @@ class PythonObjectEncoder(JSONEncoder):
             return JSONEncoder.default(self, obj)
         return {'_python_object': pickle.dumps(obj)}
 
-class IXP(object):
-    def __init__(self, id, name, name_long, org_id, city, country, region_continent):
-        self.id = id
-        self.name = name
-        self.name_long = name_long
-        self.org_id = org_id
-        self.city = city
-        self.country = country
-        self.region_continent = region_continent
-        self.members = set()
-        self.facilities = set()
-
-    def add_member(self, member_id):
-        self.members.add(member_id)
-
-    def add_facility(self, facility_id):
-        self.facilities.add(facility_id)
-
-    def get_facilities(self):
-        return self.facilities
-
-
-def get_request(endpoint):
-    base_url = "https://peeringdb.com/api/"
-    query = base_url + endpoint
-    response = requests.get(query)
-    return response.json()
 
 target_ip = sys.argv[1]
 target_asn = int(sys.argv[2])
@@ -85,45 +58,8 @@ ATLAS_API_KEY = sys.argv[5]
 
 ping = Ping(af=4, target=target_ip, description="Presence-informed RTT geolocation", packets=packets_num)
 
-asn_location = set()
-
-# Get the IXPs
-ix = get_request("ix")
-id_ix_mapping = dict()
-ix_id_mapping = dict()
-for ix_object in ix["data"]:
-    ixp = IXP(ix_object["id"], ix_object["name"].strip(), ix_object["name_long"], ix_object["org_id"], ix_object["city"],
-              ix_object["country"], ix_object["region_continent"])
-    ix_id_mapping[ix_object["name"].strip().encode("utf-8")] = ix_object["id"]
-    id_ix_mapping[ix_object["id"]] = ixp
-
-country_presences = dict()
-
-# Get cities where the ASN has facility presences
-netfac = get_request("netfac")
-for netfac_object in netfac["data"]:
-    if netfac_object["local_asn"] == target_asn:
-        city = netfac_object["city"].lower()
-        country = netfac_object["country"].lower()
-        location = "%s|%s" % (city, country)
-        asn_location.add(location)
-        if country not in country_presences:
-            country_presences[country] = list()
-        country_presences[country].append(city)
-
-# Get the cities where the ASN has IXP presences
-netixlan = get_request("netixlan")
-for netixlan_object in netixlan["data"]:
-    if netixlan_object["asn"] == target_asn:
-        ix_id = netixlan_object["ix_id"]
-        ix_object = id_ix_mapping[ix_id]
-        city = ix_object.city.lower()
-        country = ix_object.country.lower()
-        location = "%s|%s" % (city, country)
-        asn_location.add(location)
-        if country not in country_presences:
-            country_presences[country] = list()
-        country_presences[country].append(city)
+peeringdb_api = PeeringDB.API()
+asn_location = peeringdb_api.get_asn_locations(target_asn).locations
 
 # Get the possible location according to MaxMind
 reader = geoip2.database.Reader('geolocation/GeoLite2-City.mmdb')
@@ -151,9 +87,6 @@ if str(maxmind_city) == "None" and str(maxmind_country) != "None":
 
 maxmind_location = "%s|%s" % (maxmind_city, maxmind_country)
 asn_location.add(maxmind_location)
-if maxmind_country not in country_presences:
-    country_presences[maxmind_country] = list()
-country_presences[maxmind_country].append(maxmind_city)
 
 print "Possible locations according to PeeringDB:"
 for location in asn_location:
@@ -168,7 +101,7 @@ with open("geolocation/world_cities.csv", "r") as fin:
             location = "%s|%s" % (lf[0].lower(), lf[6].lower())
             city_coordinates[location] = (lf[3], lf[2]) # long, lat
 
-# Order countries by number of presences to find the main country from which we start the measurements
+# TODO Order countries by number of presences to find the main country from which we start the measurements
 
 target_asn_probes = set()
 candidate_probes = dict()
@@ -253,18 +186,16 @@ try:
     # Shut down everything
     atlas_stream.disconnect()
 
-    prv_median_min_rtt = sys.maxint
+    prv_min_rtt = sys.maxint
     closest_location = "undecided"
     for location in location_rtt:
-        #data = np.array(location_rtt[location])
-        #min_rtt = np.median(data)
         min_rtt = min(location_rtt[location])
-        if min_rtt < prv_median_min_rtt:
-            prv_median_min_rtt = min_rtt
+        if min_rtt < prv_min_rtt:
+            prv_min_rtt = min_rtt
             closest_location = location
 
-    if prv_median_min_rtt < 10:
-        print target_ip, closest_location, prv_median_min_rtt
+    if prv_min_rtt < 10:
+        print target_ip, closest_location, prv_min_rtt
     else:
         print "Error: Couldn't converge to a target. Possibly incomplete presence data"
 
