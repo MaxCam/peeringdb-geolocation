@@ -1,68 +1,54 @@
 # coding=latin-1
-import requests, time, sys, pickle, gzip, random
-from json import dumps, loads, JSONEncoder, JSONDecoder
-from collections import OrderedDict
-from geopy import distance
-from geopy import Point
-from geopy.geocoders import Nominatim
+import sys, gzip, random
 from datetime import datetime
+from geopy.geocoders import Nominatim
+from geopy import geocoders
 import numpy as np
 import geoip2.database
-from ripe.atlas.cousteau import (
-  Ping,
-  AtlasCreateRequest,
-  AtlasSource,
-  AtlasStream,
-  ProbeRequest
-)
-from ripe.atlas.cousteau.source import MalFormattedSource
-import requests.packages.urllib3
-requests.packages.urllib3.disable_warnings()
 import PeeringDB
-
-def on_result_response(*args):
-    """
-    Function that will be called every time we receive a new result.
-    Args is a tuple, so you should use args[0] to access the real message.
-    """
-    global location_rtt
-    global probe_location
-    min_rtt = sys.maxint
-    result = args[0]['result']
-    print probe_location[args[0]["prb_id"]], result
-    for reply in result:
-        if "rtt" in reply:
-            rtt = reply["rtt"]
-            if rtt < min_rtt:
-                min_rtt = rtt
-
-    location = probe_location[args[0]["prb_id"]]
-    if location not in location_rtt:
-        location_rtt[location] = list()
-    if min_rtt != sys.maxint:
-        location_rtt[location].append(min_rtt)
-
-
-class PythonObjectEncoder(JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, (list, dict, str, unicode, int, float, bool, type(None))):
-            return JSONEncoder.default(self, obj)
-        return {'_python_object': pickle.dumps(obj)}
-
+from Atlas import Atlas
 
 target_ip = sys.argv[1]
 target_asn = int(sys.argv[2])
 probes_num = int(sys.argv[3])
 packets_num = int(sys.argv[4])
 ATLAS_API_KEY = sys.argv[5]
+GMAP_API_KEY = sys.argv[6]
 
-ping = Ping(af=4, target=target_ip, description="Presence-informed RTT geolocation", packets=packets_num)
+gmap_geolocator = geocoders.GoogleV3(api_key = GMAP_API_KEY)
+
+
+def get_location_coordinates(target_location):
+    """
+    Looks up the coordinates for the target location
+    :param target_location:
+    :return: a dictionary with the latitude, longitude, city name and country code according to Google Maps API
+    """
+    city_coordinates = dict()
+    location = gmap_geolocator.geocode(target_location, timeout=30)
+    if location is not None:
+        if "geometry" in location.raw and "location" in location.raw["geometry"]:
+            city_coordinates["lat"] = location.raw["geometry"]["location"]["lat"]
+            city_coordinates["lng"] = location.raw["geometry"]["location"]["lng"]
+        if "address_components" in location.raw:
+            for address_component in location.raw["address_components"]:
+                if "types" in address_component:
+                    if "locality" in address_component["types"]:
+                        city_coordinates["city"] = address_component["short_name"]
+                    elif "country" in address_component["types"]:
+                        city_coordinates["country"] = address_component["short_name"]
+
+    if len(city_coordinates) == 4:
+        return city_coordinates
+    else:
+        return False
+
 
 peeringdb_api = PeeringDB.API()
 asn_location = peeringdb_api.get_asn_locations(target_asn).locations
 
 # Get the possible location according to MaxMind
-reader = geoip2.database.Reader('geolocation/GeoLite2-City.mmdb')
+reader = geoip2.database.Reader('data/GeoLite2-City.mmdb')
 response = reader.city(target_ip)
 maxmind_city = response.city.name
 if maxmind_city is not None:
@@ -71,7 +57,7 @@ maxmind_country = response.country.iso_code.lower()
 
 # if maxmind indicates a country but the city is 'none', find the city with the largest population in that country
 if str(maxmind_city) == "None" and str(maxmind_country) != "None":
-    with gzip.open("geolocation/worldcitiespop.txt.gz") as fin:
+    with gzip.open("data/worldcitiespop.txt.gz") as fin:
         maxmind_city = None
         largest_city_pop = 0
         for line in fin:
@@ -81,123 +67,94 @@ if str(maxmind_city) == "None" and str(maxmind_country) != "None":
                     if int(lf[4]) > largest_city_pop:
                         largest_city_pop = int(lf[4])
                         maxmind_city = lf[1].lower()
-                        print largest_city_pop
                 except ValueError, e:
                     continue
 
 maxmind_location = "%s|%s" % (maxmind_city, maxmind_country)
 asn_location.add(maxmind_location)
 
-print "Possible locations according to PeeringDB:"
+print "Possible locations:"
 for location in asn_location:
     print location
 
 # Get the longitude and latitude of the cities
 city_coordinates = dict()
-with open("geolocation/world_cities.csv", "r") as fin:
+with open("data/world_cities.csv", "r") as fin:
     for line in fin:
         lf = line.strip().split(",")
         if len(lf) > 0:
-            location = "%s|%s" % (lf[0].lower(), lf[6].lower())
+            location = "%s %s" % (lf[0].lower(), lf[6].lower())
             city_coordinates[location] = (lf[3], lf[2]) # long, lat
 
-# TODO Order countries by number of presences to find the main country from which we start the measurements
+#TODO Order countries by number of presences to find the main country from which we start the measurements
 
+atlas_api = Atlas(ATLAS_API_KEY)
 target_asn_probes = set()
 candidate_probes = dict()
 probe_location = dict()
 geolocator = Nominatim() # The geopy geolocator
 for location in asn_location:
     location = location.lower()
-    candidate_probes[location] = set()
-    if location not in city_coordinates:
-        print "We do not have the coordinates for the location: %s" % location
-        continue
-    coordinates = city_coordinates[location]
-    city = location.split("|")[0]
-    country = location.split("|")[1]
-    # Get the probes in the same city
-    filters = {"country_code": country, "status": 1}
-    probes = ProbeRequest(**filters)
+    # Get the coordinates for this location
+    location_data = get_location_coordinates(location)
+    if location_data is not False:
+        # Get the probes in this location
+        available_probes = atlas_api.select_probes_in_location(
+            location_data["lat"],
+            location_data["lng"],
+            location_data["country"],
+            40
+        )
 
-    for probe in probes:
-        if probe["asn_v4"] is not None and probe["geometry"]["type"] == "Point":
-            probe_lon = probe["geometry"]["coordinates"][0]
-            probe_lat = probe["geometry"]["coordinates"][1]
-            if probe["asn_v4"] == target_asn:
-                target_asn_probes.add(probe["id"])
-                reverse_location = geolocator.reverse("%s, %s" % (probe_lat, probe_lon), language='en')
-                probe_location[probe["id"]] = reverse_location.address
-            else:
-                p1 = Point("%s %s" % (coordinates[0], coordinates[1]))
-                p2 = Point("%s %s" % (probe_lon, probe_lat))
-                result = distance.distance(p1, p2).kilometers
-                if result <= 40:
-                    candidate_probes[location].add(probe["id"])
-                    probe_location[probe["id"]] = location
+        if len(available_probes) > 0:
+            gmap_location = "%s|%s" % (location_data["city"], location_data["country"])
+            if gmap_location not in candidate_probes:
+                candidate_probes[gmap_location] = set()
 
+            for probe_id in available_probes:
+                candidate_probes[gmap_location].add(probe_id)
+                probe_location[probe_id] = gmap_location
+        else:
+            print "Warning: No available probes in the location %s %s: " % (location_data["city"], location_data["country"])
+    else:
+        print "Warning: Could not find the coordinates for %s: " % location
+
+# Get the probes in the target ASN
+for probe_object in atlas_api.select_probes_in_asn(target_asn):
+    target_asn_probes.add(probe_object.id)
+    reverse_location = geolocator.reverse("%s, %s" % (probe_object.lat, probe_object.lng), language='en')
+    probe_location[probe_object.id] = reverse_location.address
+
+print candidate_probes.keys()
 selected_probes = set()
 location_rtt = dict()
-for location in asn_location:
-    if len(candidate_probes[location]) == 0:
-        print "Error: Could not find the appropriate probes for the location: %s" % location
-        #print "Exiting ..."
-        #sys.exit(-1)
+for location in candidate_probes:
+    if probes_num > len(candidate_probes[location]):
+        selected_probes |= set(candidate_probes[location])
     else:
-        if probes_num > len(candidate_probes[location]):
-            selected_probes |= set(candidate_probes[location])
-        else:
-            selected_probes |= set(random.sample(candidate_probes[location], probes_num))
+        selected_probes |= set(random.sample(candidate_probes[location], probes_num))
 
 selected_probes |= target_asn_probes
 
-source = AtlasSource(
-    value=','.join(str(x) for x in selected_probes),
-    requested=len(selected_probes),
-    type="probes"
-)
+if len(selected_probes) > 0:
+    af = 4
+    description="Presence-informed RTT geolocation"
 
-atlas_request = AtlasCreateRequest(
-    start_time=datetime.utcnow(),
-    key=ATLAS_API_KEY,
-    measurements=[ping],
-    sources=[source],
-    is_oneoff=True
-)
-
-try:
-    (is_success, response) = atlas_request.create()
-
-    measurement_id = response["measurements"][0]
-
-    atlas_stream = AtlasStream()
-    atlas_stream.connect()
-    # Measurement results
-    channel = "result"
-    # Bind function we want to run with every result message received
-    atlas_stream.bind_channel(channel, on_result_response)
-    # Subscribe to new stream for 1001 measurement results
-    stream_parameters = {"msm": measurement_id}
-    atlas_stream.start_stream(stream_type="result", **stream_parameters)
-
-    # Timeout all subscriptions after 5 secs. Leave seconds empty for no timeout.
-    # Make sure you have this line after you start *all* your streams
-    atlas_stream.timeout(seconds=120)
-    # Shut down everything
-    atlas_stream.disconnect()
+    ping_results = atlas_api.ping_measurement(af, target_ip, description, packets_num, selected_probes)
 
     prv_min_rtt = sys.maxint
-    closest_location = "undecided"
-    for location in location_rtt:
-        min_rtt = min(location_rtt[location])
-        if min_rtt < prv_min_rtt:
-            prv_min_rtt = min_rtt
-            closest_location = location
+    closest_probe = 0
+    for probe_id in ping_results:
+        probe_min_rtt =  min(ping_results[probe_id])
+        if probe_min_rtt < prv_min_rtt:
+            prv_min_rtt = probe_min_rtt
+            closest_probe = probe_id
 
     if prv_min_rtt < 10:
-        print target_ip, closest_location, prv_min_rtt
+        print target_ip, probe_id, probe_location[closest_probe], prv_min_rtt
     else:
         print "Error: Couldn't converge to a target. Possibly incomplete presence data"
+        print "The closest probe for %s is %s in %s with RTT %s", (target_ip, probe_id, probe_location[closest_probe], prv_min_rtt)
 
-except MalFormattedSource, e:
-    print "Unable to create Atlas measurement. Error:\n%s\n" % str(e)
+else:
+    print "Error: couldn't find any Atlas probe in the requested locations"
