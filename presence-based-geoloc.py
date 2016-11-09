@@ -5,15 +5,20 @@ from geopy.geocoders import Nominatim
 from geopy import geocoders
 import numpy as np
 import geoip2.database
+import pyasn
 import PeeringDB
 from Atlas import Atlas
 
 target_ip = sys.argv[1]
-target_asn = int(sys.argv[2])
-probes_num = int(sys.argv[3])
-packets_num = int(sys.argv[4])
-ATLAS_API_KEY = sys.argv[5]
-GMAP_API_KEY = sys.argv[6]
+probes_num = int(sys.argv[2])
+packets_num = int(sys.argv[3])
+ATLAS_API_KEY = sys.argv[4]
+GMAP_API_KEY = sys.argv[5]
+ipasn_file = sys.argv[6]
+
+# Map the target IP to the corresponding ASN
+asndb = pyasn.pyasn(ipasn_file)
+target_asn, prefix = asndb.lookup(target_ip)
 
 gmap_geolocator = geocoders.GoogleV3(api_key = GMAP_API_KEY)
 
@@ -50,28 +55,31 @@ asn_location = peeringdb_api.get_asn_locations(target_asn).locations
 # Get the possible location according to MaxMind
 reader = geoip2.database.Reader('data/GeoLite2-City.mmdb')
 response = reader.city(target_ip)
-maxmind_city = response.city.name
-if maxmind_city is not None:
-    maxmind_city = maxmind_city.lower()
-maxmind_country = response.country.iso_code.lower()
+if response.country is not None:
+    print response.country
+    maxmind_city = response.city.name
+    if maxmind_city is not None:
+        maxmind_city = maxmind_city.lower()
+    maxmind_country = response.country.iso_code
 
-# if maxmind indicates a country but the city is 'none', find the city with the largest population in that country
-if str(maxmind_city) == "None" and str(maxmind_country) != "None":
-    with gzip.open("data/worldcitiespop.txt.gz") as fin:
-        maxmind_city = None
-        largest_city_pop = 0
-        for line in fin:
-            lf = line.strip().split(",")
-            if len(lf) > 0 and maxmind_country == lf[0]:
-                try:
-                    if int(lf[4]) > largest_city_pop:
-                        largest_city_pop = int(lf[4])
-                        maxmind_city = lf[1].lower()
-                except ValueError, e:
-                    continue
+    # if maxmind indicates a country but the city is 'none', find the city with the largest population in that country
+    if str(maxmind_city) == "None" and str(maxmind_country) != "None":
+        maxmind_country = maxmind_country.lower()
+        with gzip.open("data/worldcitiespop.txt.gz") as fin:
+            maxmind_city = None
+            largest_city_pop = 0
+            for line in fin:
+                lf = line.strip().split(",")
+                if len(lf) > 0 and maxmind_country == lf[0]:
+                    try:
+                        if int(lf[4]) > largest_city_pop:
+                            largest_city_pop = int(lf[4])
+                            maxmind_city = lf[1].lower()
+                    except ValueError, e:
+                        continue
 
-maxmind_location = "%s|%s" % (maxmind_city, maxmind_country)
-asn_location.add(maxmind_location)
+    maxmind_location = "%s|%s" % (maxmind_city, maxmind_country)
+    asn_location.add(maxmind_location)
 
 print "Possible locations:"
 for location in asn_location:
