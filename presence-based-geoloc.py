@@ -6,21 +6,35 @@ from geopy import geocoders
 import numpy as np
 import geoip2.database
 import pyasn
+import ConfigParser
 import PeeringDB
 from Atlas import Atlas
 
 target_ip = sys.argv[1]
-probes_num = int(sys.argv[2])
-packets_num = int(sys.argv[3])
-ATLAS_API_KEY = sys.argv[4]
-GMAP_API_KEY = sys.argv[5]
-ipasn_file = sys.argv[6]
+ipasn_file = sys.argv[2]
 
 # Map the target IP to the corresponding ASN
 asndb = pyasn.pyasn(ipasn_file)
 target_asn, prefix = asndb.lookup(target_ip)
 
-gmap_geolocator = geocoders.GoogleV3(api_key = GMAP_API_KEY)
+
+def read_config():
+    """
+    Reads the configuration parameters and maps each section and option in the configuration file to a dictionary
+    :return: the dictionary including all the configuration parameters
+    """
+    config = dict()
+    config_parser = ConfigParser.ConfigParser()
+    config_parser.read("config/config.ini")
+    for section in config_parser.sections():
+        options = config_parser.options(section)
+        config[section] = dict()
+        for option in options:
+            try:
+                config[section][option] = config_parser.get(section, option)
+            except:
+                config[section][option] = None
+    return config
 
 
 def get_location_coordinates(target_location):
@@ -49,6 +63,16 @@ def get_location_coordinates(target_location):
         return False
 
 
+# Read the configuration parameters
+config = read_config()
+probes_num = config["PingParameters"]["probes_per_city"]
+packets_num = config["PingParameters"]["packets_number"]
+ip_version = config["PingParameters"]["ip_version"]
+ATLAS_API_KEY = config["ApiKeys"]["atlas_key"]
+GMAP_API_KEY = config["ApiKeys"]["gmap_key"]
+
+gmap_geolocator = geocoders.GoogleV3(api_key = GMAP_API_KEY)
+
 peeringdb_api = PeeringDB.API()
 asn_location = peeringdb_api.get_asn_locations(target_asn).locations
 
@@ -56,7 +80,6 @@ asn_location = peeringdb_api.get_asn_locations(target_asn).locations
 reader = geoip2.database.Reader('data/GeoLite2-City.mmdb')
 response = reader.city(target_ip)
 if response.country is not None:
-    print response.country
     maxmind_city = response.city.name
     if maxmind_city is not None:
         maxmind_city = maxmind_city.lower()
@@ -84,15 +107,6 @@ if response.country is not None:
 print "Possible locations:"
 for location in asn_location:
     print location
-
-# Get the longitude and latitude of the cities
-city_coordinates = dict()
-with open("data/world_cities.csv", "r") as fin:
-    for line in fin:
-        lf = line.strip().split(",")
-        if len(lf) > 0:
-            location = "%s %s" % (lf[0].lower(), lf[6].lower())
-            city_coordinates[location] = (lf[3], lf[2]) # long, lat
 
 #TODO Order countries by number of presences to find the main country from which we start the measurements
 
@@ -145,7 +159,7 @@ for location in candidate_probes:
 selected_probes |= target_asn_probes
 
 if len(selected_probes) > 0:
-    af = 4
+    af = ip_version
     description="Presence-informed RTT geolocation"
 
     ping_results = atlas_api.ping_measurement(af, target_ip, description, packets_num, selected_probes)
