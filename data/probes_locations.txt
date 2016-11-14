@@ -1,0 +1,1074 @@
+51.5615	-0.1415	London	Greater London	GB
+51.5075	-0.0125	London	Greater London	GB
+51.4995	-0.1195	London	Greater London	GB
+51.4705	-0.0225	London	Greater London	GB
+51.4985	-0.1205	London	Greater London	GB
+51.4775	-0.0105	London	Greater London	GB
+51.4195	-0.1895	London	Greater London	GB
+51.4975	-0.0885	London	Greater London	GB
+51.4875	-0.0225	London	Greater London	GB
+51.5075	0.0015	London	Greater London	GB
+51.5085	-0.0005	London	Greater London	GB
+51.5015	-0.0505	London	Greater London	GB
+51.4995	-0.3195	London	Greater London	GB
+51.5375	-0.3215	Perivale	Greater London	GB
+51.5215	-0.0385	London	Greater London	GB
+51.6075	0.0305	Woodford	Greater London	GB
+51.5115	0.0015	London	Greater London	GB
+51.4275	-0.1095	London	Greater London	GB
+51.4175	-0.2225	London	Greater London	GB
+51.5075	-0.0005	London	Greater London	GB
+51.4885	-0.0215	London	Greater London	GB
+51.5005	-0.2205	London	Greater London	GB
+51.5085	0.0005	London	Greater London	GB
+51.5695	-0.2325	London	Greater London	GB
+51.5075	-0.1225	London	Greater London	GB
+51.6485	-0.1995	Barnet	Greater London	GB
+51.5675	-0.1525	London	Greater London	GB
+51.5075	-0.1195	London	Greater London	GB
+51.5075	-0.0095	London	Greater London	GB
+51.5595	-0.2325	London	Greater London	GB
+51.5015	-0.0115	London	Greater London	GB
+51.5105	-0.1315	London	Greater London	GB
+51.4175	-0.3725	Hampton	Greater London	GB
+51.5105	-0.1325	London	Greater London	GB
+51.4905	-0.2695	London	Greater London	GB
+51.4995	-0.2995	London	Greater London	GB
+51.4915	-0.2705	London	Greater London	GB
+51.5895	-0.1915	London	Greater London	GB
+51.5495	-0.1725	London	Greater London	GB
+51.5275	-0.1025	Tait Building City University	Greater London	GB
+51.4875	-0.2095	London	Greater London	GB
+51.5075	0.0005	London	Greater London	GB
+51.4285	-0.3315	Teddington	Greater London	GB
+51.5405	-0.0595	London	Greater London	GB
+51.4115	-0.1685	Mitcham	Greater London	GB
+51.5075	-0.1325	London	Greater London	GB
+51.5105	-0.0985	London	Greater London	GB
+51.5205	-0.0795	London	Greater London	GB
+51.5595	-0.0985	London	Greater London	GB
+51.5105	0.0005	London	Greater London	GB
+51.5685	-0.3415	Harrow	Greater London	GB
+51.5115	-0.0025	London	Greater London	GB
+51.4605	-0.1415	London	Greater London	GB
+51.5085	-0.1315	London	Greater London	GB
+51.6485	-0.0785	Enfield	Greater London	GB
+51.5085	-0.0015	London	Greater London	GB
+51.4975	-0.1195	London	Greater London	GB
+51.5175	-0.0895	London	Greater London	GB
+51.5015	-0.0085	London	Greater London	GB
+51.4995	-0.4505	West Drayton	Greater London	GB
+51.7495	0.1375	False	Essex	GB
+51.5085	-0.0125	London	Greater London	GB
+51.5475	-0.2315	London	Greater London	GB
+51.5015	-0.0095	London	Greater London	GB
+51.5515	-0.4785	Uxbridge	Greater London	GB
+51.5105	-0.1015	London	Greater London	GB
+51.5085	-0.0025	London	Greater London	GB
+51.5785	-0.2315	London	Greater London	GB
+51.2375	-0.2485	False	Surrey	GB
+51.5095	-0.1295	London	Greater London	GB
+51.4905	-0.0995	London	Greater London	GB
+51.4995	0.1575	Belvedere	Greater London	GB
+51.5075	-0.1205	London	Greater London	GB
+51.5115	-0.1225	London	Greater London	GB
+51.2375	-0.2225	Reigate	Surrey	GB
+51.5205	-0.0815	London	Greater London	GB
+51.4405	-0.3405	Twickenham	Greater London	GB
+51.4985	-0.0115	London	Greater London	GB
+51.5205	-0.0715	London	Greater London	GB
+51.3595	-0.0995	South Croydon	Greater London	GB
+51.6015	-0.1925	London	Greater London	GB
+51.5195	-0.0705	London	Greater London	GB
+51.3775	-0.2385	Worcester Park	Greater London	GB
+51.5115	-0.1295	London	Greater London	GB
+51.4095	0.0085	Bromley	Greater London	GB
+51.5095	-0.0015	London	Greater London	GB
+51.3915	-0.1225	Thornton Heath	Greater London	GB
+51.4695	-0.3215	Isleworth	Greater London	GB
+51.2315	-0.2015	Reigate	Surrey	GB
+51.5095	0.0015	London	Greater London	GB
+51.5015	-0.1015	London	Greater London	GB
+51.5005	-0.1215	London	Greater London	GB
+51.6015	-0.3785	Pinner	Greater London	GB
+51.1795	-0.1485	Horley	Surrey	GB
+51.5415	-0.0885	London	Greater London	GB
+51.6575	-0.2015	Barnet	Greater London	GB
+51.5585	-0.1295	London	Greater London	GB
+51.5185	-0.0715	London	Greater London	GB
+51.5085	0.0015	London	Greater London	GB
+51.7975	-0.2105	Welwyn Garden City	Hertfordshire	GB
+51.5085	-0.0705	London	Greater London	GB
+51.6985	-0.4095	Abbots Langley	Hertfordshire	GB
+51.6505	-0.1825	Barnet	Greater London	GB
+51.4575	-0.1725	London	Greater London	GB
+51.5595	-0.0915	London	Greater London	GB
+51.4415	-0.2015	London	Greater London	GB
+51.5105	-0.1215	London	Greater London	GB
+51.5075	0.0185	London	Greater London	GB
+51.4305	-0.0585	London	Greater London	GB
+51.3875	-0.0705	London	Greater London	GB
+51.5115	-0.1325	London	Greater London	GB
+51.5075	-0.0015	London	Greater London	GB
+51.4715	-0.2005	London	Greater London	GB
+51.4405	-0.0195	London	Greater London	GB
+51.4495	-0.3525	Twickenham	Greater London	GB
+51.5315	-0.0725	London	Greater London	GB
+51.5375	-0.0515	London	Greater London	GB
+51.5405	-0.0895	London	Greater London	GB
+51.5105	-0.1285	London	Greater London	GB
+51.5215	-0.1105	London	Greater London	GB
+51.4985	-0.0205	London	Greater London	GB
+51.5105	-0.1125	London	Greater London	GB
+51.5005	-0.0085	London	Greater London	GB
+51.5315	-0.4695	Uxbridge	Greater London	GB
+51.4975	-0.0105	London	Greater London	GB
+51.5505	-0.0115	London	Greater London	GB
+51.3905	0.1075	Orpington	Greater London	GB
+51.5115	-0.0685	London	Greater London	GB
+51.5185	-0.1015	London	Greater London	GB
+51.4995	-0.0125	Admirals Way South Quay	Greater London	GB
+51.5105	-0.0015	London	Greater London	GB
+51.4985	-0.0225	London	Greater London	GB
+51.5015	-0.0125	London	Greater London	GB
+51.4315	0.0615	London	Greater London	GB
+51.5175	-0.0385	London	Greater London	GB
+51.6675	-0.3925	Watford	Hertfordshire	GB
+51.8495	-0.1825	Woolmer Green	Hertfordshire	GB
+51.4095	0.0115	Bromley	Greater London	GB
+51.4675	-0.0685	London	Greater London	GB
+51.5305	-0.2195	London	Greater London	GB
+51.6875	-0.4105	Watford	Hertfordshire	GB
+51.5015	-0.0105	London	Greater London	GB
+51.7095	-0.0585	Cheshunt	Hertfordshire	GB
+51.5305	-0.1505	London	Greater London	GB
+51.5115	-0.1185	London	Greater London	GB
+51.2315	-0.3305	Dorking	Surrey	GB
+51.4395	-0.4005	Feltham	Greater London	GB
+51.4775	0.2015	Dartford	Greater London	GB
+51.4815	-0.1115	London	Greater London	GB
+51.4895	0.0305	London	Greater London	GB
+51.4375	0.0105	London	Greater London	GB
+51.5185	-0.0695	London	Greater London	GB
+51.4595	-0.2415	London	Greater London	GB
+51.5005	-0.0295	London	Greater London	GB
+51.5105	-0.2105	London	Greater London	GB
+51.4015	-0.7305	Winkfield Row	Bracknell Forest	GB
+51.5205	-0.6185	Slough	Slough	GB
+51.2785	-0.7505	Farnborough	Hampshire	GB
+51.7585	-0.4525	Hemel Hempstead	Hertfordshire	GB
+51.2075	-0.5405	Wonersh	Surrey	GB
+51.4095	-0.7725	Bracknell	Bracknell Forest	GB
+51.7505	-0.4815	Hemel Hempstead	Hertfordshire	GB
+51.6385	-0.6985	Penn	Buckinghamshire	GB
+51.4595	-0.8995	Woodley	Wokingham	GB
+51.3715	-0.4925	Addlestone	Surrey	GB
+51.6005	-0.4785	Harefield	Greater London	GB
+51.2395	-0.7515	Aldershot	Hampshire	GB
+51.4975	-0.7085	Maidenhead	Windsor and Maidenhead	GB
+51.3185	-0.5625	Woking	Surrey	GB
+51.5275	-0.6905	Taplow	Buckinghamshire	GB
+51.4315	-0.9195	Earley	Wokingham	GB
+51.4985	-0.7105	Maidenhead	Windsor and Maidenhead	GB
+51.5195	-0.6295	Slough	Slough	GB
+51.6375	-0.7285	High Wycombe	Buckinghamshire	GB
+51.4215	-0.7725	Bracknell	Bracknell Forest	GB
+51.4595	-0.9315	Earley	Wokingham	GB
+51.4105	-0.7525	Bracknell	Bracknell Forest	GB
+51.5185	-0.6285	Slough	Slough	GB
+51.3195	-0.5785	Woking	Surrey	GB
+51.5285	-0.6885	Taplow	Buckinghamshire	GB
+51.8285	-0.4725	Markyate	Hertfordshire	GB
+51.5175	-0.6185	Slough	Slough	GB
+51.6005	-0.4795	Harefield	Greater London	GB
+51.3485	-0.4815	Byfleet	Surrey	GB
+51.7495	-0.4485	Hemel Hempstead	Hertfordshire	GB
+51.5075	-0.6025	Slough	Slough	GB
+51.1795	-0.6225	Godalming	Surrey	GB
+51.5185	-0.7215	Maidenhead	Windsor and Maidenhead	GB
+51.8005	-0.6605	Tring	Hertfordshire	GB
+51.5205	-0.6305	Slough	Slough	GB
+51.4185	-0.7705	Bracknell	Bracknell Forest	GB
+51.5085	-0.5995	Slough	Slough	GB
+51.2295	-0.8195	Farnham	Surrey	GB
+51.6305	-0.7505	High Wycombe	Buckinghamshire	GB
+51.7575	-0.4415	Hemel Hempstead	Hertfordshire	GB
+51.6515	-0.5325	Chorleywood	Hertfordshire	GB
+51.5195	-0.7195	Maidenhead	Windsor and Maidenhead	GB
+46.1605	6.0715	Bernex	Genève	CH
+46.2015	6.1285	Genève	Genève	CH
+46.1575	6.1075	La Croix-de-Rozon	Genève	CH
+46.2315	6.0815	Meyrin	Genève	CH
+46.2085	6.0995	Le Lignon	Genève	CH
+46.1905	6.0095	Russin	Genève	CH
+46.1905	6.1275	Les Acacias	Genève	CH
+46.1675	6.1095	Plan-les-Ouates	Genève	CH
+46.1995	6.1485	Genève	Genève	CH
+46.2015	6.1295	Genève	Genève	CH
+46.1995	6.1475	Genève	Genève	CH
+46.1785	6.1395	Carouge	Genève	CH
+46.2005	6.1315	Genève	Genève	CH
+46.1975	6.1385	Genève	Genève	CH
+46.1975	6.1405	Genève	Genève	CH
+46.1905	6.1195	Lancy	Genève	CH
+46.1885	6.1395	Carouge	Genève	CH
+46.3915	6.2215	Nyon	Nyon	CH
+46.3895	6.2395	Nyon	Nyon	CH
+46.1885	6.1475	Genève	Genève	CH
+46.1995	6.1375	Genève	Genève	CH
+46.1995	6.1395	Genève	Genève	CH
+46.2285	6.1115	Le Grand-Saconnex	Genève	CH
+46.2095	6.0975	Vernier	Genève	CH
+46.2115	6.0975	Vernier	Genève	CH
+46.4075	6.2085	Trélex	Nyon	CH
+46.1785	6.1475	Carouge	Genève	CH
+46.1685	6.1185	Plan-les-Ouates	Genève	CH
+46.2075	6.0505	Satigny	Genève	CH
+47.5105	7.6215	Münchenstein	Arlesheim	CH
+47.5515	7.5815	Basel	Basel-Stadt	CH
+47.2005	7.5305	Solothurn	Solothurn	CH
+47.3415	7.8675	Wangen bei Olten	Olten	CH
+47.5485	7.5795	Basel	Basel-Stadt	CH
+47.5215	7.6095	Münchenstein	Arlesheim	CH
+47.5595	7.5875	Basel	Basel-Stadt	CH
+47.3305	7.8495	Hägendorf	Olten	CH
+47.2115	7.5285	Solothurn	Solothurn	CH
+47.3395	7.8685	Wangen bei Olten	Olten	CH
+47.3595	8.5615	Zürich	Zürich	CH
+47.3485	8.7075	Uster	Uster	CH
+47.3915	8.5215	Zürich	Zürich	CH
+47.2585	8.5985	Horgen	Horgen	CH
+47.3775	8.5005	Zürich	Zürich	CH
+47.3115	8.5185	Adliswil	Horgen	CH
+47.5685	8.4815	Glattfelden	Bülach	CH
+47.4485	8.2095	Lupfig	Brugg	CH
+47.4285	8.5585	Glattbrugg	Bülach	CH
+47.4275	8.5575	Glattbrugg	Bülach	CH
+47.1775	8.5085	Zug	Zug	CH
+47.4195	8.5085	Zürich	Zürich	CH
+47.5115	8.7015	Winterthur	Winterthur	CH
+47.4215	8.5515	Zürich	Zürich	CH
+47.4815	8.4575	Dielsdorf	Dielsdorf	CH
+47.1885	8.4895	Steinhausen	Zug	CH
+47.5705	8.4785	Zweidlen	Bülach	CH
+47.1885	8.5195	Baar	Zug	CH
+47.3715	8.5305	Zürich	Zürich	CH
+47.3675	8.5375	Zürich	Zürich	CH
+47.7105	8.6385	Schaffhausen	Schaffhausen	CH
+47.3885	8.5205	Zürich	Zürich	CH
+47.4215	8.5985	Wallisellen	Bülach	CH
+47.5685	8.4795	Glattfelden	Bülach	CH
+47.3775	8.5075	Zürich	Zürich	CH
+47.4395	8.5575	Glattbrugg	Bülach	CH
+47.4895	8.7185	Winterthur	Winterthur	CH
+47.4885	8.5495	Winkel	Bülach	CH
+47.1395	8.4315	Risch ZG	Zug	CH
+47.3575	8.5205	Zürich	Zürich	CH
+47.3675	8.5505	Zürich	Zürich	CH
+47.3875	8.5195	Zürich	Zürich	CH
+47.3385	8.6685	Maur	Uster	CH
+47.3785	8.5385	Zürich	Zürich	CH
+47.3705	8.5495	Zürich	Zürich	CH
+47.4305	8.5605	Glattbrugg	Bülach	CH
+47.3905	8.6375	Dübendorf	Uster	CH
+47.3615	8.5115	Zürich	Zürich	CH
+47.3795	8.4975	Zürich	Zürich	CH
+47.3915	8.5185	Zürich	Zürich	CH
+47.1575	8.4405	Holzhäusern ZG	Zug	CH
+47.1915	8.4805	Steinhausen	Zug	CH
+47.1715	8.5195	Zug	Zug	CH
+47.3805	8.5205	Zürich	Zürich	CH
+47.5085	8.5895	Embrach	Bülach	CH
+47.3885	8.5075	Zürich	Zürich	CH
+47.5015	8.3395	Ehrendingen	Baden	CH
+47.3905	8.5175	Zürich	Zürich	CH
+47.5005	8.7215	Winterthur	Winterthur	CH
+47.3905	8.5185	Zürich	Zürich	CH
+47.3815	8.4985	Zürich	Zürich	CH
+47.3695	8.5485	Zürich	Zürich	CH
+47.3985	8.5785	Zürich	Zürich	CH
+47.5715	8.4715	Glattfelden	Bülach	CH
+47.3185	8.5385	Kilchberg	Horgen	CH
+47.4185	8.6285	Brüttisellen	Uster	CH
+47.3695	8.5375	Zürich	Zürich	CH
+47.4885	8.2085	Brugg	Brugg	CH
+47.6885	8.7495	Diessenhofen	Diessenhofen	CH
+47.3615	8.5075	Zürich	Zürich	CH
+47.3785	8.5005	Zürich	Zürich	CH
+47.4975	8.3705	Niederweningen	Dielsdorf	CH
+47.4975	8.7295	Winterthur	Winterthur	CH
+47.3275	8.4705	Bonstetten	Affoltern	CH
+47.1685	8.5195	Zug	Zug	CH
+47.2105	8.7085	Richterswil	Horgen	CH
+47.4105	8.5775	Wallisellen	Bülach	CH
+47.3785	8.5495	Zürich	Zürich	CH
+47.3785	8.5505	Zürich	Zürich	CH
+47.4975	8.7175	Winterthur	Winterthur	CH
+47.3875	8.4205	Urdorf	Dietikon	CH
+47.4205	8.5095	Zürich	Zürich	CH
+47.3675	8.5515	Zürich	Zürich	CH
+47.3705	8.5585	Zürich	Zürich	CH
+47.3775	8.6595	Schwerzenbach	Uster	CH
+47.2305	8.6695	Wädenswil	Horgen	CH
+47.3915	8.5275	Zürich	Zürich	CH
+47.4205	8.4985	Zürich	Zürich	CH
+47.5695	8.4785	Glattfelden	Bülach	CH
+47.3915	8.5195	Zürich	Zürich	CH
+47.1815	8.5685	Menzingen	Zug	CH
+47.3985	8.6175	Dübendorf	Uster	CH
+47.3775	8.4985	Zürich	Zürich	CH
+47.1415	8.5695	Unterägeri	Zug	CH
+47.3795	8.5475	Zürich	Zürich	CH
+47.4405	8.4685	Regensdorf	Dielsdorf	CH
+47.4095	8.5495	Zürich	Zürich	CH
+47.1595	8.4375	Hünenberg	Zug	CH
+47.4275	8.5615	Glattbrugg	Bülach	CH
+47.2875	8.8385	Dürnten	Hinwil	CH
+47.4995	8.7195	Winterthur	Winterthur	CH
+47.3775	8.4995	Zürich	Zürich	CH
+47.3785	8.5395	Zürich	Zürich	CH
+47.3575	8.5295	Zürich	Zürich	CH
+47.3075	8.5295	Adliswil	Horgen	CH
+47.4175	8.5005	Zürich	Zürich	CH
+47.3485	8.5295	Zürich	Zürich	CH
+47.4485	8.5575	Kloten	Bülach	CH
+47.4095	8.5485	Zürich	Zürich	CH
+47.4895	8.6975	Winterthur	Winterthur	CH
+47.3785	8.4985	Zürich	Zürich	CH
+47.3005	8.4475	Hedingen	Affoltern	CH
+47.4515	8.5415	Rümlang	Dielsdorf	CH
+47.3575	8.7105	Uster	Uster	CH
+47.4295	8.5595	Opfikon	Bülach	CH
+47.2605	8.6005	Horgen	Horgen	CH
+47.4195	8.5615	Opfikon	Bülach	CH
+47.4185	8.6385	Wangen-Brüttisellen	Uster	CH
+47.4075	8.4775	Zürich	Zürich	CH
+47.3795	8.4795	Zürich	Zürich	CH
+47.4175	8.5105	Zürich	Zürich	CH
+47.3815	8.5495	Zürich	Zürich	CH
+47.3705	8.5415	Zürich	Zürich	CH
+47.3705	8.5195	Zürich	Zürich	CH
+47.3685	8.5295	Zürich	Zürich	CH
+47.3715	8.5385	Zürich	Zürich	CH
+47.4275	8.4675	Regensdorf	Dielsdorf	CH
+47.3715	8.5415	Zürich	Zürich	CH
+47.4905	8.7275	Winterthur	Winterthur	CH
+47.4315	8.5595	Glattbrugg	Bülach	CH
+46.9485	7.4295	Bern	Bern	CH
+46.9415	7.4415	Bern	Bern	CH
+46.9505	7.4375	Bern	Bern	CH
+46.9695	7.4585	Bern	Bern	CH
+46.7305	7.6615	Oberhofen am Thunersee	Thun	CH
+47.2385	7.2695	Valbirse	Moutier	CH
+46.9605	7.4505	Bern	Bern	CH
+46.9505	7.4895	Ostermundigen	Bern	CH
+46.9575	7.4605	Bern	Bern	CH
+46.9375	7.7815	Langnau im Emmental	Signau	CH
+46.9305	7.4395	Köniz	Bern	CH
+46.9485	7.4375	Bern	Bern	CH
+46.9475	7.3795	Bern	Bern	CH
+47.0715	7.3085	Lyss	Aarberg	CH
+46.9395	7.4275	Bern	Bern	CH
+46.9595	7.4415	Bern	Bern	CH
+46.9515	7.3895	Bern	Bern	CH
+47.1585	7.5895	Recherswil	Wasseramt	CH
+46.9505	7.4675	Bern	Bern	CH
+47.0675	7.3075	Lyss	Aarberg	CH
+47.1405	7.2505	Biel	Biel	CH
+47.0615	7.6315	Burgdorf	Burgdorf	CH
+47.0815	7.5175	Fraubrunnen	Fraubrunnen	CH
+47.1895	7.3995	Grenchen	Lebern	CH
+46.9405	7.4315	Bern	Bern	CH
+46.7975	7.1505	Fribourg	La Sarine	CH
+46.9275	7.5095	Muri bei Bern	Bern	CH
+51.1375	-0.4795	Cranleigh	Surrey	GB
+51.1195	-0.5405	False	Surrey	GB
+51.1185	-0.5295	False	Surrey	GB
+47.2285	8.8215	Rapperswil-Jona	See-Gaster	CH
+47.2285	8.8305	Rapperswil-Jona	See-Gaster	CH
+47.0905	8.3495	Buchrain	Luzern	CH
+47.0595	8.5385	Arth	Schwyz	CH
+52.3595	4.9185	Amsterdam	Amsterdam	NL
+52.3515	4.8885	Amsterdam	Amsterdam	NL
+52.3805	4.8675	Amsterdam	Amsterdam	NL
+52.3495	4.8505	Amsterdam	Amsterdam	NL
+52.3515	5.1515	Almere	Almere	NL
+52.3605	4.9595	Amsterdam	Amsterdam	NL
+52.5475	4.6815	Castricum	Castricum	NL
+52.3685	4.8995	Amsterdam	Amsterdam	NL
+52.3575	4.7905	Amsterdam	Amsterdam	NL
+52.3695	4.8875	Amsterdam	Amsterdam	NL
+52.3675	4.9015	Amsterdam	Amsterdam	NL
+52.2885	4.7875	Oude Meer	Haarlemmermeer	NL
+52.2215	5.1515	Hilversum	Hilversum	NL
+52.6815	4.8005	Broek op Langedijk	Langedijk	NL
+52.3495	4.6115	Heemstede	Heemstede	NL
+52.3685	4.9015	Amsterdam	Amsterdam	NL
+52.3115	4.9695	Amsterdam-Zuidoost	Amsterdam	NL
+52.2815	4.7515	Schiphol-Rijk	Haarlemmermeer	NL
+52.3515	5.1775	Almere	Almere	NL
+52.3515	4.9075	Amsterdam	Amsterdam	NL
+52.2795	5.1615	Bussum	Bussum	NL
+52.2985	4.6875	Hoofddorp	Haarlemmermeer	NL
+52.3295	4.9215	Amsterdam	Ouder-Amstel	NL
+52.3005	4.9385	Amsterdam-Zuidoost	Amsterdam	NL
+52.4395	4.8305	Zaandam	Zaanstad	NL
+52.0975	5.1315	Utrecht	Utrecht	NL
+52.3715	4.8975	Amsterdam	Amsterdam	NL
+52.4005	4.8405	Amsterdam	Amsterdam	NL
+52.3785	4.6215	Haarlem	Haarlem	NL
+52.3705	4.8885	Amsterdam	Amsterdam	NL
+52.3905	5.2315	Almere	Almere	NL
+52.3485	5.1495	Almere	Almere	NL
+52.3675	4.8795	Amsterdam	Amsterdam	NL
+52.3595	4.8375	Amsterdam	Amsterdam	NL
+52.1195	5.0395	Utrecht	Utrecht	NL
+52.3905	5.2415	Almere	Almere	NL
+52.0995	4.7315	Bodegraven	Bodegraven-Reeuwijk	NL
+52.7205	4.8575	Heerhugowaard	Heerhugowaard	NL
+52.0875	5.1105	Utrecht	Utrecht	NL
+52.3175	4.8785	Amstelveen	Amstelveen	NL
+52.3595	4.6295	Heemstede	Heemstede	NL
+52.6205	4.7585	Alkmaar	Alkmaar	NL
+52.3715	4.8875	Amsterdam	Amsterdam	NL
+52.6475	4.7685	Alkmaar	Alkmaar	NL
+52.3015	4.9405	Amsterdam-Zuidoost	Amsterdam	NL
+52.3515	4.8315	Amsterdam	Amsterdam	NL
+52.4975	4.7475	Krommenie	Zaanstad	NL
+52.3085	4.9575	Amsterdam-Zuidoost	Amsterdam	NL
+52.3315	4.9615	Diemen	Diemen	NL
+52.0585	4.9205	Linschoten	Montfoort	NL
+52.3905	4.9585	Amsterdam	Amsterdam	NL
+52.3685	4.6285	Haarlem	Haarlem	NL
+52.3485	4.8315	Amsterdam	Amsterdam	NL
+52.1275	5.1505	Groenekan	De Bilt	NL
+52.2915	4.9505	Amsterdam-Zuidoost	Amsterdam	NL
+52.3695	4.8985	Amsterdam	Amsterdam	NL
+52.4975	4.9805	Purmerend	Purmerend	NL
+52.3685	4.8975	Amsterdam	Amsterdam	NL
+52.3675	4.8985	Amsterdam	Amsterdam	NL
+52.3505	4.6105	Heemstede	Heemstede	NL
+52.3295	5.2175	Almere	Almere	NL
+52.3015	4.9375	Amsterdam-Zuidoost	Amsterdam	NL
+52.3475	5.1275	Almere	Almere	NL
+52.3385	4.9075	Amsterdam	Amsterdam	NL
+52.3475	4.8005	Amsterdam	Amsterdam	NL
+52.5005	4.9895	Purmerend	Purmerend	NL
+52.3575	4.9305	Amsterdam	Amsterdam	NL
+52.2715	4.6195	Nieuw-Vennep	Haarlemmermeer	NL
+52.0615	4.9175	Linschoten	Montfoort	NL
+52.3495	4.6495	Haarlem	Haarlem	NL
+52.3915	5.2315	Almere	Almere	NL
+52.1005	4.9975	Utrecht	Utrecht	NL
+52.3575	4.9515	Amsterdam	Amsterdam	NL
+52.3715	4.9495	Amsterdam	Amsterdam	NL
+52.0905	5.1075	Utrecht	Utrecht	NL
+52.3015	4.6705	Hoofddorp	Haarlemmermeer	NL
+52.1705	5.0005	Breukelen	Breukelen	NL
+52.3575	4.8915	Amsterdam	Amsterdam	NL
+52.3915	4.8305	Amsterdam	Amsterdam	NL
+52.3485	4.9195	Amsterdam	Amsterdam	NL
+52.3695	4.8995	Amsterdam	Amsterdam	NL
+52.3415	4.8905	Amsterdam	Amsterdam	NL
+52.3685	4.9005	Amsterdam	Amsterdam	NL
+52.3675	4.9005	Amsterdam	Amsterdam	NL
+52.2275	5.1815	Hilversum	Hilversum	NL
+52.3475	4.9605	Diemen	Diemen	NL
+52.0775	4.7485	Bodegraven	Bodegraven-Reeuwijk	NL
+52.3505	4.9175	Amsterdam	Amsterdam	NL
+52.0915	5.0975	Utrecht	Utrecht	NL
+52.3495	4.6775	Vijfhuizen	Haarlemmermeer	NL
+52.3395	4.9275	Amsterdam	Amsterdam	NL
+52.2995	4.9385	Amsterdam-Zuidoost	Amsterdam	NL
+52.3675	4.8485	Amsterdam	Amsterdam	NL
+52.3605	4.8375	Amsterdam	Amsterdam	NL
+52.3515	4.9185	Amsterdam	Amsterdam	NL
+52.4395	4.8315	Zaandam	Zaanstad	NL
+52.3695	5.2305	Almere	Almere	NL
+52.2805	5.1605	Bussum	Bussum	NL
+52.3775	4.8875	Amsterdam	Amsterdam	NL
+52.3195	4.8695	Amstelveen	Amstelveen	NL
+52.3405	4.8885	Amsterdam	Amsterdam	NL
+52.3785	4.7995	Amsterdam	Amsterdam	NL
+52.3475	4.9515	Amsterdam	Amsterdam	NL
+52.3495	5.1815	Almere	Almere	NL
+52.3475	4.9205	Amsterdam	Amsterdam	NL
+52.5105	4.9795	Purmerend	Purmerend	NL
+52.6805	4.7905	Broek op Langedijk	Langedijk	NL
+52.0715	5.0795	Utrecht	Utrecht	NL
+52.3605	4.9385	Amsterdam	Amsterdam	NL
+52.3905	4.8905	Amsterdam	Amsterdam	NL
+52.2885	4.9495	Amsterdam-Zuidoost	Amsterdam	NL
+52.0495	4.9015	Snelrewaard	Oudewater	NL
+52.3695	5.2175	Almere	Almere	NL
+52.2175	4.8705	Mijdrecht	De Ronde Venen	NL
+52.3085	4.8705	Amstelveen	Amstelveen	NL
+52.3505	4.9185	Amsterdam	Amsterdam	NL
+52.3785	4.6485	Haarlem	Haarlem	NL
+52.3815	5.2375	Almere	Almere	NL
+52.3905	4.6495	Haarlem	Haarlem	NL
+52.3575	4.8375	Amsterdam	Amsterdam	NL
+52.5105	5.0105	Purmerend	Purmerend	NL
+52.3715	4.9015	Amsterdam	Amsterdam	NL
+52.0915	5.1105	Utrecht	Utrecht	NL
+52.2485	4.8285	Uithoorn	Uithoorn	NL
+52.3675	4.8975	Amsterdam	Amsterdam	NL
+52.3885	4.6585	Haarlem	Haarlem	NL
+52.3485	4.8585	Amsterdam	Amsterdam	NL
+52.0975	5.1205	Utrecht	Utrecht	NL
+52.3685	4.8715	Amsterdam	Amsterdam	NL
+52.4375	4.9905	Broek in Waterland	Waterland	NL
+52.0895	5.1205	Utrecht	Utrecht	NL
+52.3695	5.2185	Almere	Almere	NL
+52.3675	4.8875	Amsterdam	Amsterdam	NL
+52.3875	4.8875	Amsterdam	Amsterdam	NL
+52.3295	4.9595	Diemen	Diemen	NL
+52.4975	4.7785	Wormerveer	Zaanstad	NL
+52.3605	4.8485	Amsterdam	Amsterdam	NL
+52.3875	4.6695	Haarlem	Haarlem	NL
+52.2795	4.7475	Schiphol-Rijk	Haarlemmermeer	NL
+52.5015	4.9285	Purmerend	Purmerend	NL
+52.5705	4.6885	Limmen	Castricum	NL
+52.2805	4.8595	Amstelveen	Amstelveen	NL
+52.3385	5.2185	Almere	Almere	NL
+52.6815	4.7475	Koedijk	Alkmaar	NL
+52.3005	4.6975	Hoofddorp	Haarlemmermeer	NL
+52.4895	5.0595	Volendam	Edam-Volendam	NL
+52.5285	4.7075	Uitgeest	Uitgeest	NL
+52.3505	4.6115	Heemstede	Heemstede	NL
+52.3315	4.9685	Diemen	Diemen	NL
+52.0795	4.9685	Harmelen	Woerden	NL
+52.4005	4.8375	Amsterdam	Amsterdam	NL
+52.3515	4.8295	Amsterdam	Amsterdam	NL
+52.3895	4.8305	Amsterdam	Amsterdam	NL
+52.3495	4.8315	Amsterdam	Amsterdam	NL
+52.3485	5.1375	Almere	Almere	NL
+52.3775	4.8975	Amsterdam	Amsterdam	NL
+52.3875	4.8285	Amsterdam	Amsterdam	NL
+52.3405	4.8915	Amsterdam	Amsterdam	NL
+52.2885	4.6815	Hoofddorp	Haarlemmermeer	NL
+52.0775	4.7995	Nieuwerbrug aan den Rijn	Bodegraven-Reeuwijk	NL
+52.3385	4.9275	Amsterdam	Amsterdam	NL
+52.3705	4.8985	Amsterdam	Amsterdam	NL
+52.6585	4.7515	Alkmaar	Alkmaar	NL
+52.3685	4.8875	Amsterdam	Amsterdam	NL
+52.2175	5.1285	Hilversum	Hilversum	NL
+52.2985	4.9375	Ouderkerk aan de Amstel	Ouder-Amstel	NL
+52.3275	4.9515	Diemen	Diemen	NL
+52.2305	5.1715	Hilversum	Hilversum	NL
+52.0405	4.9505	Montfoort	Montfoort	NL
+52.5485	4.9085	Middenbeemster	Beemster	NL
+52.3295	4.9185	Amsterdam	Ouder-Amstel	NL
+52.0915	4.7295	Bodegraven	Bodegraven-Reeuwijk	NL
+52.1005	5.1315	Utrecht	Utrecht	NL
+52.3595	4.9515	Amsterdam	Amsterdam	NL
+52.2895	4.9485	Ouderkerk aan de Amstel	Ouder-Amstel	NL
+52.1005	5.1085	Utrecht	Utrecht	NL
+52.3705	4.8915	Amsterdam	Amsterdam	NL
+52.3885	4.9185	Amsterdam	Amsterdam	NL
+52.3995	4.6475	Haarlem	Haarlem	NL
+52.5495	4.9185	Middenbeemster	Beemster	NL
+52.3685	5.2405	Almere	Almere	NL
+52.2775	4.7685	Aalsmeer	Aalsmeer	NL
+52.3795	4.8985	Amsterdam	Amsterdam	NL
+48.8215	2.3315	Paris	Paris	FR
+48.8875	2.3615	Paris	Paris	FR
+48.8575	2.3605	Paris	Paris	FR
+48.8615	2.3415	Paris	Paris	FR
+48.7875	2.4075	Vitry-sur-Seine	Val-de-Marne	FR
+48.8915	2.3485	Paris	Paris	FR
+48.7875	2.6395	Roissy-en-Brie	Seine-et-Marne	FR
+48.8095	2.3375	Arcueil	Val-de-Marne	FR
+48.8615	2.3475	Paris	Paris	FR
+48.8995	2.2995	Clichy	Hauts-de-Seine	FR
+48.8595	2.3505	Paris	Paris	FR
+48.7785	2.3215	Bourg-la-Reine	Hauts-de-Seine	FR
+48.7615	2.2885	Châtenay-Malabry	Hauts-de-Seine	FR
+48.9295	2.3505	Saint-Denis	Seine-Saint-Denis	FR
+48.7575	2.4105	Choisy-le-Roi	Val-de-Marne	FR
+48.7515	2.2095	Bièvres	Essonne	FR
+48.6275	2.4915	Saint-Germain-lès-Corbeil	Essonne	FR
+48.8395	2.2375	Boulogne-Billancourt	Hauts-de-Seine	FR
+48.8205	2.2695	Issy-les-Moulineaux	Hauts-de-Seine	FR
+48.8495	2.3405	Paris	Paris	FR
+48.6785	2.4975	Brunoy	Essonne	FR
+48.7885	2.0495	Guyancourt	Yvelines	FR
+48.9385	2.5675	Vaujours	Seine-Saint-Denis	FR
+48.7795	2.2985	Sceaux	Hauts-de-Seine	FR
+48.8575	2.3495	Paris-4E-Arrondissement	Paris	FR
+48.9285	2.3575	Saint-Denis	Seine-Saint-Denis	FR
+48.8705	2.3415	Paris	Paris	FR
+48.8585	2.3775	Paris	Paris	FR
+48.7475	2.4875	Limeil-Brévannes	Val-de-Marne	FR
+48.8785	2.3615	Paris	Paris	FR
+48.7895	2.2585	Clamart	Hauts-de-Seine	FR
+48.7515	2.3405	Rungis	Val-de-Marne	FR
+48.8915	2.3375	Paris	Paris	FR
+48.8605	2.3475	Paris-1ER-Arrondissement	Paris	FR
+48.8395	2.6485	Lognes	Seine-et-Marne	FR
+48.9115	2.3705	Aubervilliers	Seine-Saint-Denis	FR
+48.8485	2.5385	Noisy-le-Grand	Seine-Saint-Denis	FR
+48.8005	2.1405	Versailles	Yvelines	FR
+48.8615	2.3405	Paris	Paris	FR
+48.8895	2.3505	Paris	Paris	FR
+48.9085	2.2415	La Garenne-Colombes	Hauts-de-Seine	FR
+48.8175	2.2985	Malakoff	Hauts-de-Seine	FR
+48.8195	2.3175	Montrouge	Hauts-de-Seine	FR
+48.8315	2.3285	Paris	Paris	FR
+48.7005	2.1895	Orsay	Essonne	FR
+48.8185	2.3405	Paris	Paris	FR
+48.8805	2.3305	Paris	Paris	FR
+48.9015	2.2975	Clichy	Hauts-de-Seine	FR
+48.8515	2.3705	Paris-12E-Arrondissement	Paris	FR
+48.8485	2.4115	Paris	Paris	FR
+48.8605	2.3385	Paris	Paris	FR
+48.8115	2.3115	Montrouge	Hauts-de-Seine	FR
+48.7895	2.6175	Pontault-Combault	Seine-et-Marne	FR
+48.8295	2.3105	Paris	Paris	FR
+48.9575	2.3795	Stains	Seine-Saint-Denis	FR
+48.8715	2.3785	Paris	Paris	FR
+48.9495	2.6015	Villeparisis	Seine-et-Marne	FR
+48.8175	2.3805	Ivry-sur-Seine	Val-de-Marne	FR
+48.8815	2.3495	Paris	Paris	FR
+48.8095	2.3885	Ivry-sur-Seine	Val-de-Marne	FR
+48.8695	2.0975	Marly-le-Roi	Yvelines	FR
+48.6995	2.1985	Orsay	Essonne	FR
+48.8695	2.5895	Chelles	Seine-et-Marne	FR
+48.8615	2.3805	Paris	Paris	FR
+48.9785	2.3795	Sarcelles	Val-d'Oise	FR
+48.8595	2.3815	Paris	Paris	FR
+48.9985	2.2295	Franconville	Val-d'Oise	FR
+48.7905	2.1875	Vélizy-Villacoublay	Yvelines	FR
+48.8615	2.3775	Paris	Paris	FR
+48.7575	2.0785	Guyancourt	Yvelines	FR
+48.8115	2.2985	Châtillon	Hauts-de-Seine	FR
+48.8405	2.5685	Noisy-le-Grand	Seine-Saint-Denis	FR
+48.6975	2.2415	Villebon-sur-Yvette	Essonne	FR
+48.8315	2.3995	Paris	Paris	FR
+48.9595	2.1915	Cormeilles-en-Parisis	Val-d'Oise	FR
+48.8105	2.5115	Champigny-sur-Marne	Val-de-Marne	FR
+48.8475	2.1405	La Celle-Saint-Cloud	Yvelines	FR
+48.8315	2.3385	Paris	Paris	FR
+48.8305	2.2595	Issy-les-Moulineaux	Hauts-de-Seine	FR
+48.8105	2.2385	Meudon	Hauts-de-Seine	FR
+48.9275	2.3475	Saint-Denis	Seine-Saint-Denis	FR
+48.7595	2.0385	Voisins-le-Bretonneux	Yvelines	FR
+48.9295	2.3485	Saint-Denis	Seine-Saint-Denis	FR
+48.9105	2.2605	Bois-Colombes	Hauts-de-Seine	FR
+48.8195	2.3015	Malakoff	Hauts-de-Seine	FR
+48.8615	2.1985	Rueil-Malmaison	Hauts-de-Seine	FR
+48.8485	2.6415	Torcy	Seine-et-Marne	FR
+48.9305	2.3475	Saint-Denis	Seine-Saint-Denis	FR
+48.8605	2.3515	Paris-4E-Arrondissement	Paris	FR
+48.8785	2.2895	Paris	Paris	FR
+48.7995	2.1285	Versailles	Yvelines	FR
+48.7685	2.3795	Thiais	Val-de-Marne	FR
+48.8395	2.3185	Paris-14E-Arrondissement	Paris	FR
+48.8905	2.2905	Levallois-Perret	Hauts-de-Seine	FR
+49.0405	2.2175	Bessancourt	Val-d'Oise	FR
+48.8785	2.3505	Paris	Paris	FR
+48.8315	2.3215	Paris	Paris	FR
+48.9715	2.2875	Saint-Gratien	Val-d'Oise	FR
+48.8585	2.3815	Paris	Paris	FR
+48.8585	2.3395	Paris	Paris	FR
+48.8675	2.2895	Paris	Paris	FR
+48.7785	2.3015	Sceaux	Hauts-de-Seine	FR
+48.8495	2.2975	Paris	Paris	FR
+48.8685	2.2185	Suresnes	Hauts-de-Seine	FR
+48.8995	2.3515	Paris-18E-Arrondissement	Paris	FR
+48.8585	2.3515	Paris	Paris	FR
+48.8075	2.4185	Alfortville	Val-de-Marne	FR
+48.8085	2.3205	Arcueil	Val-de-Marne	FR
+48.6415	2.2315	Marcoussis	Essonne	FR
+48.6395	2.5615	Lieusaint	Seine-et-Marne	FR
+48.8605	2.3505	Paris	Paris	FR
+48.8475	2.5695	Noisy-le-Grand	Seine-Saint-Denis	FR
+48.9175	2.2495	Colombes	Hauts-de-Seine	FR
+48.8005	2.3475	Arcueil	Val-de-Marne	FR
+48.9395	2.4495	Le Blanc-Mesnil	Seine-Saint-Denis	FR
+48.8015	2.3615	Villejuif	Val-de-Marne	FR
+48.9005	2.4685	Noisy-le-Sec	Seine-Saint-Denis	FR
+48.8215	2.3915	Ivry-sur-Seine	Val-de-Marne	FR
+48.7915	2.4085	Vitry-sur-Seine	Val-de-Marne	FR
+48.8615	2.3905	Paris	Paris	FR
+48.8875	2.0975	Le Pecq	Yvelines	FR
+48.9115	2.3575	Saint-Denis	Seine-Saint-Denis	FR
+48.7475	2.3005	Antony	Hauts-de-Seine	FR
+48.6415	2.5585	Lieusaint	Seine-et-Marne	FR
+48.6785	2.3795	Viry-Châtillon	Essonne	FR
+48.6715	2.0495	Boullay-les-Troux	Essonne	FR
+48.8615	2.3785	Paris	Paris	FR
+48.8505	2.2095	Saint-Cloud	Hauts-de-Seine	FR
+48.9005	2.2595	Courbevoie	Hauts-de-Seine	FR
+48.7715	2.0515	Montigny-le-Bretonneux	Yvelines	FR
+48.8375	2.3185	Paris-14E-Arrondissement	Paris	FR
+48.8185	2.2585	Issy-les-Moulineaux	Hauts-de-Seine	FR
+48.8405	2.2385	Boulogne-Billancourt	Hauts-de-Seine	FR
+48.7005	2.1105	Gif-sur-Yvette	Essonne	FR
+48.9085	2.2375	La Garenne-Colombes	Hauts-de-Seine	FR
+48.8695	2.0885	Marly-le-Roi	Yvelines	FR
+48.9395	2.3605	Saint-Denis	Seine-Saint-Denis	FR
+48.8675	2.3175	Paris-8E-Arrondissement	Paris	FR
+48.8905	2.3085	Paris	Paris	FR
+48.8205	2.2715	Issy-les-Moulineaux	Hauts-de-Seine	FR
+48.8815	2.3505	Paris	Paris	FR
+48.9305	2.3485	Saint-Denis	Seine-Saint-Denis	FR
+48.8405	2.5875	Champs-sur-Marne	Seine-et-Marne	FR
+49.0415	2.0695	Cergy	Val-d'Oise	FR
+48.8585	2.3405	Paris	Paris	FR
+48.9485	2.1405	Maisons-Laffitte	Yvelines	FR
+48.8175	2.3785	Ivry-sur-Seine	Val-de-Marne	FR
+48.8215	2.3395	Paris	Paris	FR
+48.8385	2.2385	Boulogne-Billancourt	Hauts-de-Seine	FR
+48.8905	2.4095	Pantin	Seine-Saint-Denis	FR
+48.7715	2.3385	Chevilly-Larue	Val-de-Marne	FR
+48.8385	2.3575	Paris	Paris	FR
+48.7885	2.4115	Vitry-sur-Seine	Val-de-Marne	FR
+48.9115	2.3975	Aubervilliers	Seine-Saint-Denis	FR
+48.8775	2.3615	Paris	Paris	FR
+48.9095	2.3675	Aubervilliers	Seine-Saint-Denis	FR
+48.8705	2.3095	Paris	Paris	FR
+48.8575	2.3395	Paris-1ER-Arrondissement	Paris	FR
+48.8675	2.3215	Paris	Paris	FR
+48.8875	2.2415	Puteaux	Hauts-de-Seine	FR
+48.8515	2.3015	Paris	Paris	FR
+48.9385	2.3585	Saint-Denis	Seine-Saint-Denis	FR
+48.8195	2.4795	Joinville-le-Pont	Val-de-Marne	FR
+48.8395	2.4395	Paris	Paris	FR
+48.9315	2.3475	Saint-Denis	Seine-Saint-Denis	FR
+48.8275	2.3495	Paris	Paris	FR
+48.7605	2.0375	Voisins-le-Bretonneux	Yvelines	FR
+48.7285	2.2805	Massy	Essonne	FR
+48.7995	2.4285	Maisons-Alfort	Val-de-Marne	FR
+48.8915	2.3415	Paris	Paris	FR
+48.8695	2.2295	Suresnes	Hauts-de-Seine	FR
+48.9285	2.3495	Saint-Denis	Seine-Saint-Denis	FR
+48.9005	2.2805	Levallois-Perret	Hauts-de-Seine	FR
+48.8595	2.3475	Paris	Paris	FR
+48.8895	2.3285	Paris	Paris	FR
+48.8615	2.3815	Paris	Paris	FR
+48.8215	2.2675	Issy-les-Moulineaux	Hauts-de-Seine	FR
+48.8475	2.4285	Vincennes	Val-de-Marne	FR
+48.7915	2.3285	Cachan	Val-de-Marne	FR
+48.8195	2.4085	Charenton-le-Pont	Val-de-Marne	FR
+48.9395	2.1695	Sartrouville	Yvelines	FR
+48.8675	2.3285	Paris	Paris	FR
+48.8595	2.3495	Paris	Paris	FR
+48.9015	2.2275	Nanterre	Hauts-de-Seine	FR
+48.9105	2.2905	Asnières-sur-Seine	Hauts-de-Seine	FR
+48.8575	2.3805	Paris	Paris	FR
+48.9075	2.3575	Saint-Denis	Seine-Saint-Denis	FR
+48.8085	2.3585	Le Kremlin-Bicêtre	Val-de-Marne	FR
+48.8295	2.2995	Paris	Paris	FR
+48.8895	2.2885	Levallois-Perret	Hauts-de-Seine	FR
+48.7885	2.3585	Villejuif	Val-de-Marne	FR
+48.9305	2.3515	Saint-Denis	Seine-Saint-Denis	FR
+48.8275	2.3605	Paris	Paris	FR
+48.8995	2.2875	Levallois-Perret	Hauts-de-Seine	FR
+48.8085	2.0615	Saint-Cyr-l'École	Yvelines	FR
+48.8415	2.2875	Paris	Paris	FR
+48.8885	2.3605	Paris	Paris	FR
+48.8505	2.2795	Paris	Paris	FR
+48.7875	2.4085	Vitry-sur-Seine	Val-de-Marne	FR
+48.8675	2.2285	Suresnes	Hauts-de-Seine	FR
+48.8775	2.1675	Rueil-Malmaison	Hauts-de-Seine	FR
+48.8285	2.3595	Paris	Paris	FR
+48.8715	2.3175	Paris	Paris	FR
+48.8285	2.2585	Issy-les-Moulineaux	Hauts-de-Seine	FR
+48.7875	2.1805	Vélizy-Villacoublay	Yvelines	FR
+48.9285	2.2395	Colombes	Hauts-de-Seine	FR
+48.8915	2.2605	Neuilly-sur-Seine	Hauts-de-Seine	FR
+48.8575	2.3305	Paris	Paris	FR
+48.8395	2.5105	Le Perreux-sur-Marne	Val-de-Marne	FR
+49.0085	2.2015	Beauchamp	Val-d'Oise	FR
+48.8985	2.2605	Courbevoie	Hauts-de-Seine	FR
+48.6705	2.1295	Gometz-le-Châtel	Essonne	FR
+48.9115	2.3785	Aubervilliers	Seine-Saint-Denis	FR
+48.8285	2.2385	Boulogne-Billancourt	Hauts-de-Seine	FR
+48.7885	2.2185	Meudon	Hauts-de-Seine	FR
+48.6415	2.5085	Tigery	Essonne	FR
+48.8405	2.3015	Paris	Paris	FR
+48.8315	2.2605	Boulogne-Billancourt	Hauts-de-Seine	FR
+48.8315	2.2595	Boulogne-Billancourt	Hauts-de-Seine	FR
+48.7895	2.3615	Villejuif	Val-de-Marne	FR
+48.8385	2.3185	Paris	Paris	FR
+48.7685	2.3595	Chevilly-Larue	Val-de-Marne	FR
+48.9895	2.2175	Franconville	Val-d'Oise	FR
+48.8505	2.3985	Paris	Paris	FR
+55.6785	12.5485	Frederiksberg	Frederiksberg Municipality	DK
+55.6995	12.5905	København	København	DK
+55.6585	12.2975	Taastrup	Høje-Taastrup Municipality	DK
+55.7805	12.5175	Kongens Lyngby	Lyngby-Taarbæk Municipality	DK
+55.6585	12.5005	København	København	DK
+55.6885	12.5295	Frederiksberg	Frederiksberg Municipality	DK
+55.6715	12.5715	København	København	DK
+55.6575	12.5385	København	København	DK
+55.6695	12.5715	København	København	DK
+55.6795	12.5705	København	København	DK
+55.7005	12.5005	København	København	DK
+55.6595	12.5005	København	København	DK
+55.7315	12.3815	Ballerup	Ballerup Municipality	DK
+55.6285	12.5675	Kastrup	København	DK
+55.7115	12.5285	København	København	DK
+55.7315	12.3805	Ballerup	Ballerup Municipality	DK
+55.6975	12.5195	København	København	DK
+55.6675	12.5585	København	København	DK
+55.6815	12.5715	København	København	DK
+55.6775	12.5685	København	København	DK
+55.6585	12.5975	København	København	DK
+55.6595	12.3985	Brøndby	Brondby	DK
+55.7315	12.3775	Ballerup	Ballerup Municipality	DK
+55.6705	12.4385	Brøndby	False	DK
+55.7795	12.5205	Kongens Lyngby	Lyngby-Taarbæk Municipality	DK
+55.7585	12.4915	Kongens Lyngby	Gladsaxe Municipality	DK
+55.6415	12.4805	Hvidovre	Hvidovre Municipality	DK
+55.7105	12.5315	København	København	DK
+55.7205	12.5475	København	København	DK
+55.6885	12.5405	København	København	DK
+55.7005	12.5285	København	København	DK
+55.6605	12.4695	Hvidovre	Hvidovre Municipality	DK
+55.6675	12.5385	København	København	DK
+55.6675	12.5705	København	København	DK
+55.7305	12.5585	Hellerup	Gentofte Municipality	DK
+55.7115	12.5315	København	København	DK
+55.6205	12.3815	Vallensbæk Strand	Vallensbæk Municipality	DK
+55.7805	12.5195	Kongens Lyngby	Lyngby-Taarbæk Municipality	DK
+55.7705	12.4615	Bagsværd	Gladsaxe Municipality	DK
+55.5915	12.5915	Dragør	Tårnby Municipality	DK
+55.8875	12.4985	Hørsholm	Hørsholm Municipality	DK
+55.6985	12.5875	København	København	DK
+55.7385	12.5605	Hellerup	Gentofte Municipality	DK
+55.6595	12.5175	København	København	DK
+55.7415	12.5405	Gentofte	Gentofte Municipality	DK
+55.6875	12.4915	København	København	DK
+55.7285	12.3775	Ballerup	Ballerup Municipality	DK
+55.6605	12.6275	København	København	DK
+55.7115	12.5715	København	København	DK
+55.7105	12.5215	København	København	DK
+55.6595	12.2975	Taastrup	Høje-Taastrup Municipality	DK
+55.7415	12.5695	Hellerup	Gentofte Municipality	DK
+55.7615	12.4815	Kongens Lyngby	Lyngby-Taarbæk Municipality	DK
+55.6785	12.5715	København	København	DK
+55.6605	12.5915	København	København	DK
+55.7505	12.4885	Søborg	Gladsaxe Municipality	DK
+55.6115	12.5805	Kastrup	Tårnby Municipality	DK
+55.6785	12.2505	Taastrup	Høje-Taastrup Municipality	DK
+55.6515	12.5415	København	København	DK
+55.6495	12.5495	København	København	DK
+55.7195	12.5495	København	København	DK
+55.7295	12.3675	Ballerup	Ballerup Municipality	DK
+55.6615	12.3015	Taastrup	Høje-Taastrup Municipality	DK
+55.6795	12.5875	København	København	DK
+55.6795	12.5895	København	København	DK
+55.7315	12.3885	Ballerup	Ballerup Municipality	DK
+55.6495	12.2705	Taastrup	Høje-Taastrup Municipality	DK
+55.6875	12.4215	Glostrup	Glostrup Municipality	DK
+55.6615	12.5175	København	København	DK
+55.6775	12.5815	København	København	DK
+55.7605	12.5805	Charlottenlund	Gentofte Municipality	DK
+55.7205	12.3485	Ballerup	Ballerup Municipality	DK
+55.6695	12.3995	Glostrup	Glostrup Municipality	DK
+55.6575	12.3015	Taastrup	Høje-Taastrup Municipality	DK
+55.2505	9.5005	Haderslev	Haderslev Municipality	DK
+55.4675	9.1395	Vejen	Vejen Municipality	DK
+55.4785	9.1415	Vejen	Vejen Municipality	DK
+55.5315	9.4715	Kolding	Kolding Municipality	DK
+55.5295	9.1975	Gesten	Vejen Municipality	DK
+55.2595	9.5305	Haderslev	Haderslev Municipality	DK
+49.8685	8.6415	Darmstadt	DA	DE
+50.1075	8.6785	Frankfurt am Main	DA	DE
+49.8795	8.6515	Darmstadt	DA	DE
+50.2895	8.9805	Altenstadt	DA	DE
+50.0785	8.6185	Frankfurt am Main	DA	DE
+50.1315	8.9315	Hanau	DA	DE
+50.0975	8.6305	Frankfurt am Main	DA	DE
+50.1385	8.6675	Frankfurt am Main	DA	DE
+50.1395	8.7385	Frankfurt am Main	DA	DE
+50.1475	8.4995	Bad Soden am Taunus	DA	DE
+49.8795	8.6705	Darmstadt	DA	DE
+50.1085	8.7015	Frankfurt am Main	DA	DE
+50.0095	8.7795	Dietzenbach	DA	DE
+50.1195	8.7375	Frankfurt am Main	DA	DE
+50.0785	8.6275	Frankfurt am Main	DA	DE
+50.0475	8.9515	Seligenstadt	DA	DE
+49.8685	8.6595	Darmstadt	DA	DE
+49.8615	8.5895	Griesheim	DA	DE
+49.8905	8.8285	Dieburg	DA	DE
+50.0995	8.5885	Frankfurt am Main	DA	DE
+50.1095	8.6715	Frankfurt am Main	DA	DE
+50.1285	8.9295	Hanau	DA	DE
+49.8615	8.6685	Darmstadt	DA	DE
+50.1095	8.7385	Offenbach am Main	DA	DE
+50.0405	8.9705	Seligenstadt	DA	DE
+50.1195	8.7275	Frankfurt am Main	DA	DE
+50.1715	8.9215	Bruchköbel	DA	DE
+50.1195	8.7385	Frankfurt am Main	DA	DE
+49.8695	8.6605	Darmstadt	DA	DE
+50.2475	8.6395	Friedrichsdorf	DA	DE
+50.1105	8.6805	Frankfurt am Main	DA	DE
+50.1115	8.6815	Frankfurt am Main	DA	DE
+49.8705	8.6415	Darmstadt	DA	DE
+50.0875	8.6505	Frankfurt am Main	DA	DE
+49.8605	8.6175	Darmstadt	DA	DE
+50.2475	8.6495	Friedrichsdorf	DA	DE
+50.1005	8.5885	Frankfurt am Main	DA	DE
+50.0985	8.6305	Frankfurt am Main	DA	DE
+49.9695	8.6685	Egelsbach	DA	DE
+50.1205	8.6515	Frankfurt am Main	DA	DE
+50.1095	8.6785	Frankfurt am Main	DA	DE
+50.1395	8.7375	Frankfurt am Main	DA	DE
+50.1185	8.7375	Frankfurt am Main	DA	DE
+50.1705	8.6695	Frankfurt am Main	DA	DE
+50.1095	8.9285	Hanau	DA	DE
+49.8805	8.6495	Darmstadt	DA	DE
+50.1095	8.6815	Frankfurt am Main	DA	DE
+49.8595	8.6485	Darmstadt	DA	DE
+50.0005	8.8785	Rodgau	DA	DE
+50.0775	8.6315	Frankfurt am Main	DA	DE
+50.1105	8.6675	Frankfurt am Main	DA	DE
+50.1085	8.6795	Frankfurt am Main	DA	DE
+50.1185	8.6595	Frankfurt am Main	DA	DE
+50.0615	8.7985	Heusenstamm	DA	DE
+50.2885	8.9405	Altenstadt	DA	DE
+50.0805	8.6175	Frankfurt am Main	DA	DE
+50.0985	8.6505	Frankfurt am Main	DA	DE
+50.2195	8.6375	Bad Homburg vor der Höhe	DA	DE
+50.1105	8.7395	Offenbach am Main	DA	DE
+50.0985	8.6385	Frankfurt am Main	DA	DE
+50.2975	8.6905	Rosbach vor der Höhe	DA	DE
+50.1205	8.7385	Frankfurt am Main	DA	DE
+49.8685	8.6305	Darmstadt	DA	DE
+50.0975	8.6315	Frankfurt am Main	DA	DE
+49.9405	8.9075	Babenhausen	DA	DE
+49.9885	8.4215	Rüsselsheim am Main	DA	DE
+50.1175	8.7295	Frankfurt am Main	DA	DE
+49.8885	8.6815	Darmstadt	DA	DE
+49.8685	8.6195	Darmstadt	DA	DE
+50.3395	8.5275	Usingen	DA	DE
+50.1005	8.6415	Frankfurt am Main	DA	DE
+50.1875	8.6605	Frankfurt am Main	DA	DE
+50.1105	8.6815	Frankfurt am Main	DA	DE
+50.2905	8.5415	Wehrheim	DA	DE
+50.0975	8.6295	Frankfurt am Main	DA	DE
+50.1115	8.6785	Frankfurt am Main	DA	DE
+50.0815	8.4715	Kriftel	DA	DE
+50.1895	8.5775	Oberursel (Taunus)	DA	DE
+50.1115	8.7415	Offenbach am Main	DA	DE
+49.9285	8.6105	Weiterstadt	DA	DE
+50.1195	8.7515	Frankfurt am Main	DA	DE
+49.9285	8.6575	Darmstadt	DA	DE
+50.1305	8.5995	Frankfurt am Main	DA	DE
+50.1375	8.7415	Frankfurt am Main	DA	DE
+49.8695	8.6495	Darmstadt	DA	DE
+49.8685	8.6395	Darmstadt	DA	DE
+50.1215	8.7095	Frankfurt am Main	DA	DE
+50.0995	8.6315	Frankfurt am Main	DA	DE
+50.1215	8.7415	Frankfurt am Main	DA	DE
+49.8585	8.6375	Darmstadt	DA	DE
+50.2215	8.6285	Bad Homburg vor der Höhe	DA	DE
+49.8715	8.6505	Darmstadt	DA	DE
+50.1175	8.8995	Hanau	DA	DE
+50.1075	8.6605	Frankfurt am Main	DA	DE
+50.1115	8.6795	Frankfurt am Main	DA	DE
+49.8695	8.6575	Darmstadt	DA	DE
+50.0975	8.6785	Frankfurt am Main	DA	DE
+50.0785	8.6205	Frankfurt am Main	DA	DE
+50.0995	8.6395	Frankfurt am Main	DA	DE
+50.2075	8.6505	Bad Homburg vor der Höhe	DA	DE
+50.0995	8.6305	Frankfurt am Main	DA	DE
+50.1185	8.6775	Frankfurt am Main	DA	DE
+50.1075	8.6815	Frankfurt am Main	DA	DE
+49.8675	8.6375	Darmstadt	DA	DE
+50.1115	8.6805	Frankfurt am Main	DA	DE
+50.1175	8.7395	Frankfurt am Main	DA	DE
+50.2285	8.6115	Bad Homburg vor der Höhe	DA	DE
+50.1175	8.6475	Frankfurt am Main	DA	DE
+50.1095	8.6795	Frankfurt am Main	DA	DE
+50.1085	8.7385	Offenbach am Main	DA	DE
+50.1015	8.6015	Frankfurt am Main	DA	DE
+50.1315	8.5995	Frankfurt am Main	DA	DE
+49.8705	8.6275	Darmstadt	DA	DE
+50.1295	8.6975	Frankfurt am Main	DA	DE
+50.1495	9.0195	Rodenbach	DA	DE
+50.0975	8.6895	Frankfurt am Main	DA	DE
+50.0815	8.6315	Frankfurt am Main	DA	DE
+49.8575	8.6285	Darmstadt	DA	DE
+50.1105	8.6705	Frankfurt am Main	DA	DE
+50.1295	8.6015	Frankfurt am Main	DA	DE
+49.8175	8.6415	Darmstadt	DA	DE
+49.9005	8.6495	Darmstadt	DA	DE
+50.1415	8.5715	Eschborn	DA	DE
+50.1015	8.6315	Frankfurt am Main	DA	DE
+50.1385	8.7395	Frankfurt am Main	DA	DE
+50.1415	8.5575	Eschborn	DA	DE
+50.1405	8.7385	Frankfurt am Main	DA	DE
+50.3305	8.7575	Friedberg (Hessen)	DA	DE
+50.0975	8.6385	Frankfurt am Main	DA	DE
+50.4005	8.8195	Wölfersheim	DA	DE
+49.8685	8.6505	Darmstadt	DA	DE
+50.1205	8.7375	Frankfurt am Main	DA	DE
+50.1685	8.6915	Frankfurt am Main	DA	DE
+50.1205	8.7395	Frankfurt am Main	DA	DE
+49.8095	8.5605	Pfungstadt	DA	DE
+49.8715	8.6475	Darmstadt	DA	DE
+49.8815	8.6605	Darmstadt	DA	DE
+53.5115	10.2505	Reinbek	False	DE
+53.5495	9.9885	Hamburg	False	DE
+53.5505	10.0475	Hamburg	False	DE
+53.5605	9.9085	Hamburg	False	DE
+53.4905	9.9895	Hamburg	False	DE
+53.6295	10.1715	Hamburg	False	DE
+53.5895	9.9505	Hamburg	False	DE
+53.6915	10.2605	Ahrensburg	False	DE
+53.6995	10.0015	Norderstedt	False	DE
+53.5815	10.0285	Hamburg	False	DE
+53.5675	10.0305	Hamburg	False	DE
+53.5485	10.0515	Hamburg	False	DE
+53.5485	10.0395	Hamburg	False	DE
+53.6095	10.0175	Hamburg	False	DE
+53.6395	10.0175	Hamburg	False	DE
+53.5515	10.0505	Hamburg	False	DE
+53.7805	9.9015	Alveslohe	False	DE
+53.7705	9.9775	Henstedt-Ulzburg	False	DE
+53.5705	9.9605	Hamburg	False	DE
+53.5905	9.9785	Hamburg	False	DE
+53.5505	10.0175	Hamburg	False	DE
+53.5475	10.0485	Hamburg	False	DE
+53.4595	9.9775	Hamburg	False	DE
+53.5985	10.0505	Hamburg	False	DE
+53.5785	10.0315	Hamburg	False	DE
+53.5895	10.0515	Hamburg	False	DE
+53.6315	9.9115	Hamburg	False	DE
+53.5895	9.9975	Hamburg	False	DE
+53.5575	9.9915	Hamburg	False	DE
+53.5495	10.0385	Hamburg	False	DE
+53.6075	9.8995	Hamburg	False	DE
+53.4885	10.1605	Hamburg	False	DE
+53.5595	9.9105	Hamburg	False	DE
+53.5515	9.9275	Hamburg	False	DE
+53.5815	10.0305	Hamburg	False	DE
+53.5405	10.2215	Glinde	False	DE
+53.6385	10.0305	Hamburg	False	DE
+53.5915	9.9485	Hamburg	False	DE
+53.6415	10.0185	Hamburg	False	DE
+53.5895	10.0475	Hamburg	False	DE
+53.6815	10.0285	Hamburg	False	DE
+53.7315	9.9105	Quickborn	False	DE
+53.5605	10.0115	Hamburg	False	DE
+53.5985	10.0315	Hamburg	False	DE
+53.7405	10.0685	Tangstedt	False	DE
+53.7285	9.9275	Quickborn	False	DE
+53.6375	9.9185	Hamburg	False	DE
+53.5495	10.0475	Hamburg	False	DE
+53.5515	9.9895	Hamburg	False	DE
+53.6715	9.6695	Moorrege	False	DE
+53.5275	9.8605	Hamburg	False	DE
+53.6105	10.0015	Hamburg	False	DE
+53.5495	10.0375	Hamburg	False	DE
+53.3095	9.9615	Jesteburg	False	DE
+53.5895	9.9785	Hamburg	False	DE
+53.5685	9.9705	Hamburg	False	DE
+53.7115	9.9895	Norderstedt	False	DE
+53.7115	10.0015	Norderstedt	False	DE
+53.5375	9.9885	Hamburg	False	DE
+53.6075	10.0275	Hamburg	False	DE
