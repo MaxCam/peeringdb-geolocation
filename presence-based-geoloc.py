@@ -14,8 +14,13 @@ target_ip = sys.argv[1]
 ipasn_file = sys.argv[2]
 
 # Map the target IP to the corresponding ASN
-asndb = pyasn.pyasn(ipasn_file)
-target_asn, prefix = asndb.lookup(target_ip)
+try:
+    asndb = pyasn.pyasn(ipasn_file)
+    target_asn, prefix = asndb.lookup(target_ip)
+except IOError:
+    logging.critical("Could not read the pyasn file `%s`. "
+                     "Please enter the correct file location." % ipasn_file)
+    sys.exit(-1)
 
 
 def read_config():

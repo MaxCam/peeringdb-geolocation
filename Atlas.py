@@ -1,4 +1,4 @@
-import random, sys
+import random, sys, logging
 from ujson import dumps, loads
 from geopy import distance
 from geopy import Point
@@ -29,6 +29,8 @@ class Probe:
 class Atlas:
 
     def __init__(self, atlas_key):
+        logging.basicConfig()
+        self.logger = logging.getLogger("GeoEncoder")
         self.ATLAS_API_KEY = atlas_key
         self.ping_rtts = dict()
 
@@ -136,24 +138,35 @@ class Atlas:
                 (is_success, response) = atlas_request.create()
 
                 print response, len(','.join(str(x) for x in probes_list))
-                # TODO handle error {u'error': {u'status': 400, u'code': 104, u'detail': u'value: Ensure this value has at most 8192 characters (it has 11948).', u'title': u'Bad Request'}}
-                measurement_id = response["measurements"][0]
 
-                atlas_stream = AtlasStream()
-                atlas_stream.connect()
-                # Measurement results
-                channel = "atlas_result"
-                # Bind function we want to run with every result message received
-                atlas_stream.bind_channel(channel, self.on_result_response)
-                stream_parameters = {"msm": measurement_id}
-                atlas_stream.start_stream(stream_type="result", **stream_parameters)
+                # Example of error response:
+                # {u'error': {u'status': 400, u'code': 104, u'detail': u'value: Ensure this value has at most 8192 characters (it has 11948).', u'title': u'Bad Request'}}
+                if "error" in response:
+                    self.logger.critical("The RIPE Atlas measurement failed due to`%s` error with message: \"%s\"."
+                                            % (response["error"]["title"], response["error"]["detail"]))
+                    sys.exit(-1)
+                else:
+                    measurement_id = response["measurements"][0]
 
-                # Timeout all subscriptions after 120 secs. Leave seconds empty for no timeout.
-                # Make sure you have this line after you start *all* your streams
-                atlas_stream.timeout(seconds=120)
-                # Shut down everything
-                atlas_stream.disconnect()
+                    atlas_stream = AtlasStream()
+                    atlas_stream.connect()
+                    # Measurement results
+                    channel = "atlas_result"
+                    # Bind function we want to run with every result message received
+                    atlas_stream.bind_channel(channel, self.on_result_response)
+                    stream_parameters = {"msm": measurement_id}
+                    atlas_stream.start_stream(stream_type="result", **stream_parameters)
+
+                    # Timeout all subscriptions after 120 secs. Leave seconds empty for no timeout.
+                    # Make sure you have this line after you start *all* your streams
+                    atlas_stream.timeout(seconds=120)
+                    # Shut down everything
+                    atlas_stream.disconnect()
             except MalFormattedSource, e:
-                print "Unable to create Atlas measurement. Error:\n%s\n" % str(e)
+                self.logger.critical("Unable to create RIPE Atlas measurement. Error: %s" % str(e))
+                sys.exit(-1)
+            except KeyError:
+                self.logger.critical("The RIPE Atlas API returned a malformatted measurement reply.")
+                sys.exit(-1)
 
         return  self.ping_rtts

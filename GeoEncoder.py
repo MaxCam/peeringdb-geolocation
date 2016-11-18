@@ -1,6 +1,7 @@
 import logging
 import gzip
-from geopy import geocoders
+import sys
+import geopy
 import geoip2.database
 from maxminddb.errors import InvalidDatabaseError
 
@@ -18,14 +19,14 @@ class GeoEncoder(object):
 
         try:
             self.maxmind_reader = geoip2.database.Reader(maxmind_db_file)
-        except InvalidDatabaseError, e:
+        except (IOError, InvalidDatabaseError) as e:
             self.logger.error("Reading Maxmind DB filed failed with error: %s" % str(e))
 
         self.worldcities_pop = worldcities_pop
         self.coordinates_file = coordinates_file
         self.probes_locations_file = probes_locations_file
         # Create the Google Maps API geolocator
-        self.gmap_geolocator = geocoders.GoogleV3(api_key=self.GMAP_API_KEY)
+        self.gmap_geolocator = geopy.geocoders.GoogleV3(api_key=self.GMAP_API_KEY)
 
     def write_location_coordinates(self, location_id, location_data):
         """
@@ -136,18 +137,24 @@ class GeoEncoder(object):
         :return: a dictionary with the latitude, longitude, city name and country code according to Google Maps API
         """
         city_coordinates = dict()
-        location = self.gmap_geolocator.geocode(target_location, timeout=30)
-        if location is not None:
-            if "geometry" in location.raw and "location" in location.raw["geometry"]:
-                city_coordinates["lat"] = location.raw["geometry"]["location"]["lat"]
-                city_coordinates["lng"] = location.raw["geometry"]["location"]["lng"]
-            if "address_components" in location.raw:
-                for address_component in location.raw["address_components"]:
-                    if "types" in address_component:
-                        if "locality" in address_component["types"]:
-                            city_coordinates["city"] = address_component["short_name"]
-                        elif "country" in address_component["types"]:
-                            city_coordinates["country"] = address_component["short_name"]
+        try:
+            location = self.gmap_geolocator.geocode(target_location, timeout=30)
+            if location is not None:
+                if "geometry" in location.raw and "location" in location.raw["geometry"]:
+                    city_coordinates["lat"] = location.raw["geometry"]["location"]["lat"]
+                    city_coordinates["lng"] = location.raw["geometry"]["location"]["lng"]
+                if "address_components" in location.raw:
+                    for address_component in location.raw["address_components"]:
+                        if "types" in address_component:
+                            if "locality" in address_component["types"]:
+                                city_coordinates["city"] = address_component["short_name"]
+                            elif "country" in address_component["types"]:
+                                city_coordinates["country"] = address_component["short_name"]
+        except geopy.exc.GeocoderQueryError, e:
+            self.logger.critical("The Google Maps API request was denied with message %s\n"
+                                 "Make sure you have provided the correct API key in the config/config.ini file." %
+                                 str(e))
+            sys.exit(-1)
 
         if len(city_coordinates) == 4:
             return city_coordinates
@@ -197,20 +204,24 @@ class GeoEncoder(object):
                 # if maxmind indicates a country but the city is 'none', find the city with the largest population in that country
                 if str(maxmind_city) == "None" and str(maxmind_country) != "None":
                     maxmind_country = maxmind_country.lower()
-                    with gzip.open(self.worldcities_pop) as fin:
-                        maxmind_city = None
-                        largest_city_pop = 0
-                        for line in fin:
-                            lf = line.strip().split(",")
-                            if len(lf) > 0 and maxmind_country == lf[0]:
-                                try:
-                                    if int(lf[4]) > largest_city_pop:
-                                        largest_city_pop = int(lf[4])
-                                        maxmind_city = lf[1].lower()
-                                except ValueError:
-                                    # If we have no data about the city's population simly move on to next city
-                                    continue
+                    try:
+                        with gzip.open(self.worldcities_pop) as fin:
+                            maxmind_city = None
+                            largest_city_pop = 0
+                            for line in fin:
+                                lf = line.strip().split(",")
+                                if len(lf) > 0 and maxmind_country == lf[0]:
+                                    try:
+                                        if int(lf[4]) > largest_city_pop:
+                                            largest_city_pop = int(lf[4])
+                                            maxmind_city = lf[1].lower()
+                                    except ValueError:
+                                        # If we have no data about the city's population simly move on to next city
+                                        continue
+                    except IOError, e:
+                        self.logger.error("Could not read file `%s`. %s" % (self.probes_locations_file, str(e)))
 
-                maxmind_location = "%s|%s" % (maxmind_city, maxmind_country)
+                if str(maxmind_city) != "None" and str(maxmind_country) != "None":
+                    maxmind_location = "%s|%s" % (maxmind_city, maxmind_country)
 
         return maxmind_location
