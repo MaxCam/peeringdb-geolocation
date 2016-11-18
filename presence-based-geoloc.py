@@ -9,6 +9,7 @@ import pyasn
 import ConfigParser
 import PeeringDB
 from Atlas import Atlas
+import logging
 
 target_ip = sys.argv[1]
 ipasn_file = sys.argv[2]
@@ -37,9 +38,114 @@ def read_config():
     return config
 
 
-def get_location_coordinates(target_location):
+def write_location_coordinates(location_id, location_data, coordinates_file):
     """
-    Looks up the coordinates for the target location
+    Append the data provided by the Google Maps API for a specific PeeringDB location to the corresponding file
+    :param location: The location id, in the format of city|country_2-letter_iso_code
+    :param location_data: The dictionary with the Google Maps data on the location indicated by :location_id
+    :param coordinates_file the file where the data will be stored
+    :return: the success status of appending to file (true or false)
+    """
+    success = True
+    try:
+        with open(coordinates_file, "a+") as fout:
+            outline = u'%s\t%s\t%s\t%s\t%s\n' % (
+                location_id,
+                location_data["lat"],
+                location_data["lng"],
+                location_data["city"],
+                location_data["country"]
+            )
+
+            fout.write(outline.encode('utf-8'))
+
+    except (IOError, UnicodeEncodeError) as e:
+        logging.error("Appending to file %s failed with error: %s" % (coordinates_file, str(e)))
+        success = False
+    return  success
+
+
+def read_location_coordinates(coordinates_file):
+    """
+    Read the coordinates, city name and country iso code according to Google maps for PeeringDB locations that have been
+    encountered in past geolocations
+    :param coordinates_file: the file where the location data are stored
+    :return: a dictionary that maps PeeringDB locations to the stored data obtained through the Google Maps API
+    """
+    location_coordinates = dict()
+    try:
+        with open(coordinates_file) as fin:
+            for line in fin:
+                lf = line.strip().split("\t")
+                if len(lf) > 0:
+                    location_id = lf[0]
+                    location_coordinates[location_id] = {
+                        "lat": lf[1],
+                        "lng": lf[2],
+                        "city": lf[3],
+                        "country": lf[4]
+                    }
+    except IOError:
+        logging.error("Could not read file %s" % coordinates_file)
+
+    return location_coordinates
+
+
+def write_coordinates_location(lat, lng, coorindates_data, probes_locations_file):
+    """
+    Append the data provided from the Google Maps API for a latitude and longitude in the correspoding file
+    :param coorindates_data: the data to append (latitude, longitude, city name, country iso code)
+    :param probes_locations_file: the path to the file where the coordinates data will be appended
+    :return: the probes_locations_file status of appending to the file (true or false)
+    """
+    success = True
+    try:
+        with open(probes_locations_file, "a+") as fout:
+            outline = u'%s\t%s\t%s\t%s\t%s\n' % (
+                lat,
+                lng,
+                coorindates_data["locality"],
+                coorindates_data["admn_lvl_2"],
+                coorindates_data["country"]
+            )
+
+            fout.write(outline.encode('utf-8'))
+
+    except (IOError, UnicodeEncodeError) as e:
+        logging.error("Appending to file %s failed with error: %s" % (probes_locations_file, str(e)))
+        success = False
+
+    return success
+
+
+def read_coordinates_location(probes_locations_file):
+    """
+    Read the city name and country iso code according to Google maps for probes coordinates that have been
+    encountered in past geolocations
+    :param probes_locations_file: the file with the coordinates data
+    :return: a dictionary that maps the coordinates to the corresponding data
+    """
+    probes_locations = dict()
+    try:
+        with open(probes_locations_file) as fin:
+            for line in fin:
+                lf = line.strip().split("\t")
+                if len(lf) > 0:
+                    location_id = "%s,%s" % (lf[0], lf[1])
+                    probes_locations[location_id] = {
+                        "locality": lf[2],
+                        "admn_lvl_2": lf[3],
+                        "country": lf[4]
+                    }
+    except IOError:
+        logging.error("Could not read file %s" % probes_locations_file)
+
+    return probes_locations
+
+
+def query_location_coordinates(target_location):
+    """
+    Queries the Google Maps API for the coordinates for the target location
     :param target_location:
     :return: a dictionary with the latitude, longitude, city name and country code according to Google Maps API
     """
@@ -63,14 +169,45 @@ def get_location_coordinates(target_location):
         return False
 
 
+def query_coordinates_location(lat, lng):
+    """
+    Queries the Google Maps API the location of a set of coordinates and returns the city name and country iso code
+    :param lat: The latitude of the location
+    :param lng: The longitude of the location
+    :return: a dictionary with the city name and the country iso code
+    """
+    reverse_location = gmap_geolocator.reverse("%s, %s" % (lat, lng), exactly_one = True, language='en')
+    coordinates_data = {
+        "admn_lvl_2": False,
+        "locality": False,
+        "country": False
+    }
+
+    if "address_components" in reverse_location.raw:
+        for address_component in reverse_location.raw["address_components"]:
+            if "types" in address_component:
+                if "administrative_area_level_2" in address_component["types"]:
+                    coordinates_data["admn_lvl_2"] = address_component["short_name"]
+                if "locality" in address_component["types"]:
+                    coordinates_data["locality"] = address_component["short_name"]
+                if "country" in address_component["types"]:
+                    coordinates_data["country"] = address_component["short_name"]
+    return coordinates_data
+
 # Read the configuration parameters
 config = read_config()
-probes_num = config["PingParameters"]["probes_per_city"]
-packets_num = config["PingParameters"]["packets_number"]
-ip_version = config["PingParameters"]["ip_version"]
+probes_num = int(config["PingParameters"]["probes_per_city"])
+packets_num = int(config["PingParameters"]["packets_number"])
+ip_version = int(config["PingParameters"]["ip_version"])
 ATLAS_API_KEY = config["ApiKeys"]["atlas_key"]
 GMAP_API_KEY = config["ApiKeys"]["gmap_key"]
+cached_coordinates_file = config["FilePaths"]["city_coordinates"]
+cached_probes_locations_file = config["FilePaths"]["probes_locations"]
 
+# Read the coordinates for locations that have been encountered in past runs
+cached_location_coordinates = read_location_coordinates(cached_coordinates_file)
+cached_probes_locations = read_coordinates_location(cached_probes_locations_file)
+# Create the Google Maps API geolocator
 gmap_geolocator = geocoders.GoogleV3(api_key = GMAP_API_KEY)
 
 peeringdb_api = PeeringDB.API()
@@ -113,13 +250,23 @@ for location in asn_location:
 atlas_api = Atlas(ATLAS_API_KEY)
 target_asn_probes = set()
 candidate_probes = dict()
-probe_location = dict()
+probe_objects = dict()
 geolocator = Nominatim() # The geopy geolocator
+
 for location in asn_location:
     location = location.lower()
     # Get the coordinates for this location
-    location_data = get_location_coordinates(location)
+    if location in cached_location_coordinates:
+        # if we have found the coordinates for this location before read it from the cached coordinates file ...
+        location_data = cached_location_coordinates[location]
+    else:
+        # ... otherwise query the Google Maps API for the coordinates ...
+        location_data = query_location_coordinates(location)
+        # ... and store the coordinates in the corresponding file
+        write_location_coordinates(location, location_data, cached_coordinates_file)
+
     if location_data is not False:
+        print "Getting probes for location: %s" % location
         # Get the probes in this location
         available_probes = atlas_api.select_probes_in_location(
             location_data["lat"],
@@ -132,10 +279,9 @@ for location in asn_location:
             gmap_location = "%s|%s" % (location_data["city"], location_data["country"])
             if gmap_location not in candidate_probes:
                 candidate_probes[gmap_location] = set()
-
-            for probe_id in available_probes:
-                candidate_probes[gmap_location].add(probe_id)
-                probe_location[probe_id] = gmap_location
+            for probe_object in available_probes:
+                candidate_probes[gmap_location].add(probe_object.id)
+                probe_objects[probe_object.id] = probe_object
         else:
             print "Warning: No available probes in the location %s %s: " % (location_data["city"], location_data["country"])
     else:
@@ -144,10 +290,8 @@ for location in asn_location:
 # Get the probes in the target ASN
 for probe_object in atlas_api.select_probes_in_asn(target_asn):
     target_asn_probes.add(probe_object.id)
-    reverse_location = geolocator.reverse("%s, %s" % (probe_object.lat, probe_object.lng), language='en')
-    probe_location[probe_object.id] = reverse_location.address
+    probe_objects[probe_object.id] = probe_object
 
-print candidate_probes.keys()
 selected_probes = set()
 location_rtt = dict()
 for location in candidate_probes:
@@ -155,8 +299,11 @@ for location in candidate_probes:
         selected_probes |= set(candidate_probes[location])
     else:
         selected_probes |= set(random.sample(candidate_probes[location], probes_num))
-
+    print location, len(selected_probes), probes_num
 selected_probes |= target_asn_probes
+print "Number of candidate probes: %s" % len(selected_probes)
+print "Number of candidate cities: %s" % len(candidate_probes.keys())
+print "Number of probes in the target ASN: %s" % len(target_asn_probes)
 
 if len(selected_probes) > 0:
     af = ip_version
@@ -172,11 +319,36 @@ if len(selected_probes) > 0:
             prv_min_rtt = probe_min_rtt
             closest_probe = probe_id
 
+    # Get the location of the closes probe
+    # Check if we have obtained the location for the probe coordinates previously ...
+    probe_coordinates = "%s,%s" % (probe_objects[closest_probe].lat, probe_objects[closest_probe].lng)
+    if not probe_coordinates in cached_probes_locations:
+        reverse_location = query_coordinates_location(probe_objects[closest_probe].lat, probe_objects[closest_probe].lng)
+        # write the reverse location in the probes_locations file
+        write_coordinates_location(probe_objects[closest_probe].lat, probe_objects[closest_probe].lng, reverse_location, cached_probes_locations_file)
+        cached_probes_locations[probe_coordinates] = {
+            "locality": reverse_location["locality"],
+            "admn_lvl_2": reverse_location["admn_lvl_2"],
+            "country": reverse_location["country"]
+        }
+    if cached_probes_locations[probe_coordinates]["admn_lvl_2"] != "False":
+        gmap_location = "%s|%s" % (
+            cached_probes_locations[probe_coordinates]["admn_lvl_2"],
+            cached_probes_locations[probe_coordinates]["country"]
+        )
+    elif cached_probes_locations[probe_coordinates]["locality"] != "False":
+        gmap_location = "%s|%s" % (
+            cached_probes_locations[probe_coordinates]["locality"],
+            cached_probes_locations[probe_coordinates]["country"]
+        )
+    else:
+        gmap_location = "unknown"
+
     if prv_min_rtt < 10:
-        print target_ip, probe_id, probe_location[closest_probe], prv_min_rtt
+        print target_ip, closest_probe, gmap_location, probe_coordinates, prv_min_rtt
     else:
         print "Error: Couldn't converge to a target. Possibly incomplete presence data"
-        print "The closest probe for %s is %s in %s with RTT %s", (target_ip, probe_id, probe_location[closest_probe], prv_min_rtt)
+        print "The closest probe for %s is %s in %s with RTT %s", (target_ip, closest_probe, gmap_location, probe_coordinates, prv_min_rtt)
 
 else:
     print "Error: couldn't find any Atlas probe in the requested locations"

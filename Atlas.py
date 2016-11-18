@@ -92,16 +92,24 @@ class Atlas:
                 p2 = Point("%s %s" % (probe_lon, probe_lat))
                 result = distance.distance(p1, p2).kilometers
                 if result <= radius:
-                    candidate_probes.add(probe["id"])
+                    candidate_probes.add(
+                        Probe(
+                            probe["id"],
+                            probe["asn_v4"],
+                            probe["geometry"]["coordinates"][1],
+                            probe["geometry"]["coordinates"][0],
+                            probe["country_code"]
+                        )
+                    )
 
         return candidate_probes
 
     def ping_measurement(self, af, target_ip, description, packets_num, probes_list):
         """
         Creates a new Ping measurement
-        :param af:
-        :param target_ip:
-        :param description:
+        :param af: The IP address family (4 or 6)
+        :param target_ip: The IP to be queried
+        :param description: The description of the measurement
         :param packets_num:
         :param probes_list:
         :return:
@@ -127,6 +135,8 @@ class Atlas:
             try:
                 (is_success, response) = atlas_request.create()
 
+                print response, len(','.join(str(x) for x in probes_list))
+                # TODO handle error {u'error': {u'status': 400, u'code': 104, u'detail': u'value: Ensure this value has at most 8192 characters (it has 11948).', u'title': u'Bad Request'}}
                 measurement_id = response["measurements"][0]
 
                 atlas_stream = AtlasStream()

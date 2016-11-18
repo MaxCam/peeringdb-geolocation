@@ -1,0 +1,62 @@
+alblasserdam|nl	51.8703366	4.6702024	Alblasserdam	NL
+almere|nl	52.3507849	5.2647016	Almere	NL
+amsterdam|nl	52.3702157	4.8951679	Amsterdam	NL
+antwerp|be	51.2194475	4.4024643	Antwerp	BE
+arnhem|nl	51.9851034	5.8987296	Arnhem	NL
+basel|ch	47.5595986	7.5885761	Basel	CH
+berlin|de	52.5200066	13.404954	Berlin	DE
+bern|ch	46.9479739	7.4474468	Bern	CH
+bettembourg|lu	49.5192118	6.1002461	Bettembourg	LU
+bordeaux|fr	44.837789	-0.57918	Bordeaux	FR
+brussels|be	50.8503396	4.3517103	Brussels	BE
+chessington|gb	51.363583	-0.296254	Chessington	GB
+copenhagen|dk	55.6760968	12.5683371	Copenhagen	DK
+delft|nl	52.0115769	4.3570677	Delft	NL
+dronten|nl	52.5346819	5.7218086	Dronten	NL
+duesseldorf|de	51.2277411	6.7734556	Düsseldorf	DE
+ede|nl	52.0401675	5.6648594	Ede	NL
+eindhoven|nl	51.441642	5.4697225	Eindhoven	NL
+enschede|nl	52.2215372	6.8936619	Enschede	NL
+frankfurt|de	50.1109221	8.6821267	Frankfurt	DE
+geneva|ch	46.2043907	6.1431577	Geneva	CH
+groningen|nl	53.2193835	6.5665018	Groningen	NL
+hamburg|de	53.5510846	9.9936818	Hamburg	DE
+hengelo|nl	52.2574121	6.7927725	Hengelo	NL
+hilversum|nl	52.2291696	5.1668974	Hilversum	NL
+limonest|fr	45.835841	4.771898	Limonest	FR
+london|gb	51.5073509	-0.1277583	London	GB
+lyon|fr	45.764043	4.835659	Lyon	FR
+maastricht|nl	50.8513682	5.6909725	Maastricht	NL
+magny-les-hameaux|fr	48.741829	2.053208	Magny-les-Hameaux	FR
+marseille|fr	43.296482	5.36978	Marseille	FR
+munich|de	48.1351253	11.5819806	Munich	DE
+new york|us	40.7127837	-74.0059413	New York	US
+newark|us	40.735657	-74.1723667	Newark	US
+north bergen|us	40.8042674	-74.012084	North Bergen	US
+paris|fr	48.856614	2.3522219	Paris	FR
+prague|cz	50.0755381	14.4378005	Prague	CZ
+pratteln|ch	47.5183198	7.6919889	Pratteln	CH
+rümlang|ch	47.4503703	8.5297027	Rümlang	CH
+rijen|nl	51.5910445	4.9180655	Rijen	NL
+rotterdam|nl	51.9244201	4.4777325	Rotterdam	NL
+secaucus |us	40.7895453	-74.0565298	Secaucus	US
+secaucus|us	40.7895453	-74.0565298	Secaucus	US
+sittard|nl	51.0006238	5.8864788	Sittard	NL
+slough|gb	51.5105384	-0.5950406	Slough	GB
+spijkenisse|nl	51.8561502	4.2972181	Spijkenisse	NL
+steenbergen|nl	51.5812395	4.3155991	Steenbergen	NL
+stockholm|se	59.3293235	18.0685808	Stockholm	SE
+venissieux - lyon|fr	45.7075265	4.8762448	Lyon	FR
+villeurbanne|fr	45.771944	4.8901709	Villeurbanne	FR
+vitry sur seine|fr	48.792001	2.39851	Vitry-sur-Seine	FR
+vitry-sur-seine|fr	48.792001	2.39851	Vitry-sur-Seine	FR
+waalwijk|nl	51.6878954	5.0574822	Waalwijk	NL
+warsaw|pl	52.2296756	21.0122287	Warsaw	PL
+wien|at	48.2081743	16.3738189	Vienna	AT
+zuidbroek|nl	53.1704058	6.8621731	Zuidbroek	NL
+zurich|ch	47.3768866	8.541694	Zürich	CH
+zwolle|nl	52.5167747	6.0830219	Zwolle	NLrümlang|ch	47.4503703	8.5297027	Rümlang	CH
+rümlang|ch	47.4503703	8.5297027	Rümlang	CH
+rümlang|ch	47.4503703	8.5297027	Rümlang	CH
+rümlang|ch	47.4503703	8.5297027	Rümlang	CH
+kolding|dk	55.495973	9.4730519	Kolding	DK
