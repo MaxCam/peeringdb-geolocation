@@ -1072,3 +1072,4 @@
 53.7115	10.0015	Norderstedt	False	DE
 53.5375	9.9885	Hamburg	False	DE
 53.6075	10.0275	Hamburg	False	DE
+51.3475	12.3875	Leipzig	Leipzig	DE

@@ -1,15 +1,14 @@
 # coding=latin-1
-import sys, gzip, random
+import sys, random
 from datetime import datetime
-from geopy.geocoders import Nominatim
-from geopy import geocoders
 import numpy as np
-import geoip2.database
 import pyasn
+import logging
+# My classes
 import ConfigParser
 import PeeringDB
 from Atlas import Atlas
-import logging
+from GeoEncoder import GeoEncoder
 
 target_ip = sys.argv[1]
 ipasn_file = sys.argv[2]
@@ -38,162 +37,6 @@ def read_config():
     return config
 
 
-def write_location_coordinates(location_id, location_data, coordinates_file):
-    """
-    Append the data provided by the Google Maps API for a specific PeeringDB location to the corresponding file
-    :param location: The location id, in the format of city|country_2-letter_iso_code
-    :param location_data: The dictionary with the Google Maps data on the location indicated by :location_id
-    :param coordinates_file the file where the data will be stored
-    :return: the success status of appending to file (true or false)
-    """
-    success = True
-    try:
-        with open(coordinates_file, "a+") as fout:
-            outline = u'%s\t%s\t%s\t%s\t%s\n' % (
-                location_id,
-                location_data["lat"],
-                location_data["lng"],
-                location_data["city"],
-                location_data["country"]
-            )
-
-            fout.write(outline.encode('utf-8'))
-
-    except (IOError, UnicodeEncodeError) as e:
-        logging.error("Appending to file %s failed with error: %s" % (coordinates_file, str(e)))
-        success = False
-    return  success
-
-
-def read_location_coordinates(coordinates_file):
-    """
-    Read the coordinates, city name and country iso code according to Google maps for PeeringDB locations that have been
-    encountered in past geolocations
-    :param coordinates_file: the file where the location data are stored
-    :return: a dictionary that maps PeeringDB locations to the stored data obtained through the Google Maps API
-    """
-    location_coordinates = dict()
-    try:
-        with open(coordinates_file) as fin:
-            for line in fin:
-                lf = line.strip().split("\t")
-                if len(lf) > 0:
-                    location_id = lf[0]
-                    location_coordinates[location_id] = {
-                        "lat": lf[1],
-                        "lng": lf[2],
-                        "city": lf[3],
-                        "country": lf[4]
-                    }
-    except IOError:
-        logging.error("Could not read file %s" % coordinates_file)
-
-    return location_coordinates
-
-
-def write_coordinates_location(lat, lng, coorindates_data, probes_locations_file):
-    """
-    Append the data provided from the Google Maps API for a latitude and longitude in the correspoding file
-    :param coorindates_data: the data to append (latitude, longitude, city name, country iso code)
-    :param probes_locations_file: the path to the file where the coordinates data will be appended
-    :return: the probes_locations_file status of appending to the file (true or false)
-    """
-    success = True
-    try:
-        with open(probes_locations_file, "a+") as fout:
-            outline = u'%s\t%s\t%s\t%s\t%s\n' % (
-                lat,
-                lng,
-                coorindates_data["locality"],
-                coorindates_data["admn_lvl_2"],
-                coorindates_data["country"]
-            )
-
-            fout.write(outline.encode('utf-8'))
-
-    except (IOError, UnicodeEncodeError) as e:
-        logging.error("Appending to file %s failed with error: %s" % (probes_locations_file, str(e)))
-        success = False
-
-    return success
-
-
-def read_coordinates_location(probes_locations_file):
-    """
-    Read the city name and country iso code according to Google maps for probes coordinates that have been
-    encountered in past geolocations
-    :param probes_locations_file: the file with the coordinates data
-    :return: a dictionary that maps the coordinates to the corresponding data
-    """
-    probes_locations = dict()
-    try:
-        with open(probes_locations_file) as fin:
-            for line in fin:
-                lf = line.strip().split("\t")
-                if len(lf) > 0:
-                    location_id = "%s,%s" % (lf[0], lf[1])
-                    probes_locations[location_id] = {
-                        "locality": lf[2],
-                        "admn_lvl_2": lf[3],
-                        "country": lf[4]
-                    }
-    except IOError:
-        logging.error("Could not read file %s" % probes_locations_file)
-
-    return probes_locations
-
-
-def query_location_coordinates(target_location):
-    """
-    Queries the Google Maps API for the coordinates for the target location
-    :param target_location:
-    :return: a dictionary with the latitude, longitude, city name and country code according to Google Maps API
-    """
-    city_coordinates = dict()
-    location = gmap_geolocator.geocode(target_location, timeout=30)
-    if location is not None:
-        if "geometry" in location.raw and "location" in location.raw["geometry"]:
-            city_coordinates["lat"] = location.raw["geometry"]["location"]["lat"]
-            city_coordinates["lng"] = location.raw["geometry"]["location"]["lng"]
-        if "address_components" in location.raw:
-            for address_component in location.raw["address_components"]:
-                if "types" in address_component:
-                    if "locality" in address_component["types"]:
-                        city_coordinates["city"] = address_component["short_name"]
-                    elif "country" in address_component["types"]:
-                        city_coordinates["country"] = address_component["short_name"]
-
-    if len(city_coordinates) == 4:
-        return city_coordinates
-    else:
-        return False
-
-
-def query_coordinates_location(lat, lng):
-    """
-    Queries the Google Maps API the location of a set of coordinates and returns the city name and country iso code
-    :param lat: The latitude of the location
-    :param lng: The longitude of the location
-    :return: a dictionary with the city name and the country iso code
-    """
-    reverse_location = gmap_geolocator.reverse("%s, %s" % (lat, lng), exactly_one = True, language='en')
-    coordinates_data = {
-        "admn_lvl_2": False,
-        "locality": False,
-        "country": False
-    }
-
-    if "address_components" in reverse_location.raw:
-        for address_component in reverse_location.raw["address_components"]:
-            if "types" in address_component:
-                if "administrative_area_level_2" in address_component["types"]:
-                    coordinates_data["admn_lvl_2"] = address_component["short_name"]
-                if "locality" in address_component["types"]:
-                    coordinates_data["locality"] = address_component["short_name"]
-                if "country" in address_component["types"]:
-                    coordinates_data["country"] = address_component["short_name"]
-    return coordinates_data
-
 # Read the configuration parameters
 config = read_config()
 probes_num = int(config["PingParameters"]["probes_per_city"])
@@ -201,44 +44,22 @@ packets_num = int(config["PingParameters"]["packets_number"])
 ip_version = int(config["PingParameters"]["ip_version"])
 ATLAS_API_KEY = config["ApiKeys"]["atlas_key"]
 GMAP_API_KEY = config["ApiKeys"]["gmap_key"]
+maxmind_db_file = config["FilePaths"]["maxmind_db"]
+worldcities_pop = config["FilePaths"]["worldcities_population"]
 cached_coordinates_file = config["FilePaths"]["city_coordinates"]
 cached_probes_locations_file = config["FilePaths"]["probes_locations"]
 
+geo_encoder = GeoEncoder(GMAP_API_KEY, maxmind_db_file, cached_coordinates_file, cached_probes_locations_file, worldcities_pop)
 # Read the coordinates for locations that have been encountered in past runs
-cached_location_coordinates = read_location_coordinates(cached_coordinates_file)
-cached_probes_locations = read_coordinates_location(cached_probes_locations_file)
-# Create the Google Maps API geolocator
-gmap_geolocator = geocoders.GoogleV3(api_key = GMAP_API_KEY)
+cached_location_coordinates = geo_encoder.read_location_coordinates()
+cached_probes_locations = geo_encoder.read_coordinates_location()
 
 peeringdb_api = PeeringDB.API()
 asn_location = peeringdb_api.get_asn_locations(target_asn).locations
 
-# Get the possible location according to MaxMind
-reader = geoip2.database.Reader('data/GeoLite2-City.mmdb')
-response = reader.city(target_ip)
-if response.country is not None:
-    maxmind_city = response.city.name
-    if maxmind_city is not None:
-        maxmind_city = maxmind_city.lower()
-    maxmind_country = response.country.iso_code
-
-    # if maxmind indicates a country but the city is 'none', find the city with the largest population in that country
-    if str(maxmind_city) == "None" and str(maxmind_country) != "None":
-        maxmind_country = maxmind_country.lower()
-        with gzip.open("data/worldcitiespop.txt.gz") as fin:
-            maxmind_city = None
-            largest_city_pop = 0
-            for line in fin:
-                lf = line.strip().split(",")
-                if len(lf) > 0 and maxmind_country == lf[0]:
-                    try:
-                        if int(lf[4]) > largest_city_pop:
-                            largest_city_pop = int(lf[4])
-                            maxmind_city = lf[1].lower()
-                    except ValueError, e:
-                        continue
-
-    maxmind_location = "%s|%s" % (maxmind_city, maxmind_country)
+# Add the location provided by MaxMind in the list of possible locations in which we should ping
+maxmind_location = geo_encoder.query_maxmind_location(target_ip)
+if maxmind_location is not False:
     asn_location.add(maxmind_location)
 
 print "Possible locations:"
@@ -251,7 +72,6 @@ atlas_api = Atlas(ATLAS_API_KEY)
 target_asn_probes = set()
 candidate_probes = dict()
 probe_objects = dict()
-geolocator = Nominatim() # The geopy geolocator
 
 for location in asn_location:
     location = location.lower()
@@ -261,9 +81,10 @@ for location in asn_location:
         location_data = cached_location_coordinates[location]
     else:
         # ... otherwise query the Google Maps API for the coordinates ...
-        location_data = query_location_coordinates(location)
+        location_data = geo_encoder.query_location_coordinates(location)
         # ... and store the coordinates in the corresponding file
-        write_location_coordinates(location, location_data, cached_coordinates_file)
+        if location_data is not False:
+            geo_encoder.write_location_coordinates(location, location_data)
 
     if location_data is not False:
         print "Getting probes for location: %s" % location
@@ -323,32 +144,27 @@ if len(selected_probes) > 0:
     # Check if we have obtained the location for the probe coordinates previously ...
     probe_coordinates = "%s,%s" % (probe_objects[closest_probe].lat, probe_objects[closest_probe].lng)
     if not probe_coordinates in cached_probes_locations:
-        reverse_location = query_coordinates_location(probe_objects[closest_probe].lat, probe_objects[closest_probe].lng)
+        reverse_location = geo_encoder.query_coordinates_location(probe_objects[closest_probe].lat, probe_objects[closest_probe].lng)
         # write the reverse location in the probes_locations file
-        write_coordinates_location(probe_objects[closest_probe].lat, probe_objects[closest_probe].lng, reverse_location, cached_probes_locations_file)
+        geo_encoder.write_coordinates_location(probe_objects[closest_probe].lat, probe_objects[closest_probe].lng, reverse_location)
         cached_probes_locations[probe_coordinates] = {
             "locality": reverse_location["locality"],
             "admn_lvl_2": reverse_location["admn_lvl_2"],
             "country": reverse_location["country"]
         }
-    if cached_probes_locations[probe_coordinates]["admn_lvl_2"] != "False":
-        gmap_location = "%s|%s" % (
-            cached_probes_locations[probe_coordinates]["admn_lvl_2"],
-            cached_probes_locations[probe_coordinates]["country"]
-        )
-    elif cached_probes_locations[probe_coordinates]["locality"] != "False":
-        gmap_location = "%s|%s" % (
-            cached_probes_locations[probe_coordinates]["locality"],
-            cached_probes_locations[probe_coordinates]["country"]
-        )
-    else:
-        gmap_location = "unknown"
+
+    probe_location = "%s|%s|%s" % (
+        cached_probes_locations[probe_coordinates]["locality"],
+        cached_probes_locations[probe_coordinates]["admn_lvl_2"],
+        cached_probes_locations[probe_coordinates]["country"]
+    )
+
 
     if prv_min_rtt < 10:
-        print target_ip, closest_probe, gmap_location, probe_coordinates, prv_min_rtt
+        print target_ip, closest_probe, probe_location, probe_coordinates, prv_min_rtt
     else:
         print "Error: Couldn't converge to a target. Possibly incomplete presence data"
-        print "The closest probe for %s is %s in %s with RTT %s", (target_ip, closest_probe, gmap_location, probe_coordinates, prv_min_rtt)
+        print "The closest probe for %s is %s in %s with RTT %s", (target_ip, closest_probe, probe_location, probe_coordinates, prv_min_rtt)
 
 else:
     print "Error: couldn't find any Atlas probe in the requested locations"
