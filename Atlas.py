@@ -1,3 +1,4 @@
+# coding=latin-1
 import random, sys, logging
 from ujson import dumps, loads
 from geopy import distance
@@ -12,9 +13,11 @@ from ripe.atlas.cousteau import (
 )
 from geopy import geocoders
 from ripe.atlas.cousteau.source import MalFormattedSource
+from ripe.atlas.cousteau.exceptions import  APIResponseError
 import requests.packages.urllib3
 requests.packages.urllib3.disable_warnings()
-
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 class Probe:
 
@@ -30,7 +33,7 @@ class Atlas:
 
     def __init__(self, atlas_key):
         logging.basicConfig()
-        self.logger = logging.getLogger("GeoEncoder")
+        self.logger = logging.getLogger("Atlas")
         self.ATLAS_API_KEY = atlas_key
         self.ping_rtts = dict()
 
@@ -71,8 +74,7 @@ class Atlas:
         return candidate_probes
 
 
-    @staticmethod
-    def select_probes_in_location(lat, lng, country, radius):
+    def select_probes_in_location(self, lat, lng, country, radius):
         """
         Returns a set of Atlas probe IDs in the radius around the lat/long of the target city/country.
         :param lat: the latitude of the target location
@@ -86,24 +88,26 @@ class Atlas:
         filters = {"country_code": country, "status": 1}
         probes = ProbeRequest(**filters)
 
-        for probe in probes:
-            if probe["asn_v4"] is not None and probe["geometry"]["type"] == "Point":
-                probe_lon = probe["geometry"]["coordinates"][0]
-                probe_lat = probe["geometry"]["coordinates"][1]
-                p1 = Point("%s %s" % (lng, lat))
-                p2 = Point("%s %s" % (probe_lon, probe_lat))
-                result = distance.distance(p1, p2).kilometers
-                if result <= radius:
-                    candidate_probes.add(
-                        Probe(
-                            probe["id"],
-                            probe["asn_v4"],
-                            probe["geometry"]["coordinates"][1],
-                            probe["geometry"]["coordinates"][0],
-                            probe["country_code"]
+        try:
+            for probe in probes:
+                if probe["asn_v4"] is not None and probe["geometry"]["type"] == "Point":
+                    probe_lon = probe["geometry"]["coordinates"][0]
+                    probe_lat = probe["geometry"]["coordinates"][1]
+                    p1 = Point("%s %s" % (lng, lat))
+                    p2 = Point("%s %s" % (probe_lon, probe_lat))
+                    result = distance.distance(p1, p2).kilometers
+                    if result <= radius:
+                        candidate_probes.add(
+                            Probe(
+                                probe["id"],
+                                probe["asn_v4"],
+                                probe["geometry"]["coordinates"][1],
+                                probe["geometry"]["coordinates"][0],
+                                probe["country_code"]
+                            )
                         )
-                    )
-
+        except APIResponseError, e:
+            self.logger.error("RIPE Atlas API request failed when requesting probes for at: %s,%s" % (lat, lng))
         return candidate_probes
 
     def ping_measurement(self, af, target_ip, description, packets_num, probes_list):

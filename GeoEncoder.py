@@ -219,7 +219,7 @@ class GeoEncoder(object):
                                         # If we have no data about the city's population simly move on to next city
                                         continue
                     except IOError, e:
-                        self.logger.error("Could not read file `%s`. %s" % (self.probes_locations_file, str(e)))
+                        self.logger.error("Could not read file `%s`. %s" % (self.worldcities_pop, str(e)))
 
                 if str(maxmind_city) != "None" and str(maxmind_country) != "None":
                     maxmind_location = "%s|%s" % (maxmind_city, maxmind_country)
