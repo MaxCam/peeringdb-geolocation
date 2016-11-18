@@ -250,8 +250,9 @@ for location in asn_location:
 atlas_api = Atlas(ATLAS_API_KEY)
 target_asn_probes = set()
 candidate_probes = dict()
-probe_location = dict()
+probe_objects = dict()
 geolocator = Nominatim() # The geopy geolocator
+
 for location in asn_location:
     location = location.lower()
     # Get the coordinates for this location
@@ -273,52 +274,14 @@ for location in asn_location:
             location_data["country"],
             40
         )
-        gmap_locations = set()
+
         if len(available_probes) > 0:
             gmap_location = "%s|%s" % (location_data["city"], location_data["country"])
-
+            if gmap_location not in candidate_probes:
+                candidate_probes[gmap_location] = set()
             for probe_object in available_probes:
-
-                # Check if we have obtained the location for the probe coordinates previously ...
-                probe_coordinates = "%s,%s" % (probe_object.lat, probe_object.lng)
-                if probe_coordinates in cached_probes_locations:
-                    print "Using cached location for probe %s" % (probe_coordinates)
-                    if cached_probes_locations[probe_coordinates]["admn_lvl_2"] != "False":
-                        gmap_location = "%s|%s" % (
-                            cached_probes_locations[probe_coordinates]["admn_lvl_2"],
-                            cached_probes_locations[probe_coordinates]["country"]
-                        )
-                    elif cached_probes_locations[probe_coordinates]["locality"] != "False":
-                        gmap_location = "%s|%s" % (
-                            cached_probes_locations[probe_coordinates]["locality"],
-                            cached_probes_locations[probe_coordinates]["country"]
-                        )
-                # ... otherwise query the Google Maps API for the address of the probe coordinates
-                else:
-                    reverse_location = query_coordinates_location(probe_object.lat, probe_object.lng)
-                    # write the reverse location in the probes_locations file
-                    write_coordinates_location(probe_object.lat, probe_object.lng, reverse_location, cached_probes_locations_file)
-                    cached_probes_locations[probe_coordinates] = {
-                        "locality": reverse_location["locality"],
-                        "admn_lvl_2": reverse_location["admn_lvl_2"],
-                        "country": reverse_location["country"]
-                    }
-
-                    # If the Google Maps API returns a location at the administrative_level_2 use this as city name ...
-                    if reverse_location["admn_lvl_2"] is not False and reverse_location["country"] is not False:
-                        gmap_location = "%s|%s" % (reverse_location["admn_lvl_2"], reverse_location["country"])
-                    # ... otherwise use the locality (more specific than administrative_level_2,
-                    # will lead to more probes selected)
-                    elif reverse_location["locality"] is not False and reverse_location["country"] is not False:
-                        gmap_location = "%s|%s" % (reverse_location["locality"], reverse_location["country"])
-
-                gmap_locations.add(gmap_location)
-                gmap_location = location
-                if gmap_location not in candidate_probes:
-                    candidate_probes[gmap_location] = set()
-
                 candidate_probes[gmap_location].add(probe_object.id)
-                probe_location[probe_object.id] = gmap_location
+                probe_objects[probe_object.id] = probe_object
         else:
             print "Warning: No available probes in the location %s %s: " % (location_data["city"], location_data["country"])
     else:
@@ -327,9 +290,7 @@ for location in asn_location:
 # Get the probes in the target ASN
 for probe_object in atlas_api.select_probes_in_asn(target_asn):
     target_asn_probes.add(probe_object.id)
-    reverse_location = geolocator.reverse("%s, %s" % (probe_object.lat, probe_object.lng), language='en')
-    #query_coordinates_location(probe_object.lat, probe_object.lng)
-    probe_location[probe_object.id] = reverse_location.address
+    probe_objects[probe_object.id] = probe_object
 
 selected_probes = set()
 location_rtt = dict()
@@ -342,7 +303,6 @@ for location in candidate_probes:
 selected_probes |= target_asn_probes
 print "Number of candidate probes: %s" % len(selected_probes)
 print "Number of candidate cities: %s" % len(candidate_probes.keys())
-print "Number of candidate cities inferred from Google Maps: %s" % len(gmap_locations)
 print "Number of probes in the target ASN: %s" % len(target_asn_probes)
 
 if len(selected_probes) > 0:
@@ -359,11 +319,36 @@ if len(selected_probes) > 0:
             prv_min_rtt = probe_min_rtt
             closest_probe = probe_id
 
+    # Get the location of the closes probe
+    # Check if we have obtained the location for the probe coordinates previously ...
+    probe_coordinates = "%s,%s" % (probe_objects[closest_probe].lat, probe_objects[closest_probe].lng)
+    if not probe_coordinates in cached_probes_locations:
+        reverse_location = query_coordinates_location(probe_objects[closest_probe].lat, probe_objects[closest_probe].lng)
+        # write the reverse location in the probes_locations file
+        write_coordinates_location(probe_objects[closest_probe].lat, probe_objects[closest_probe].lng, reverse_location, cached_probes_locations_file)
+        cached_probes_locations[probe_coordinates] = {
+            "locality": reverse_location["locality"],
+            "admn_lvl_2": reverse_location["admn_lvl_2"],
+            "country": reverse_location["country"]
+        }
+    if cached_probes_locations[probe_coordinates]["admn_lvl_2"] != "False":
+        gmap_location = "%s|%s" % (
+            cached_probes_locations[probe_coordinates]["admn_lvl_2"],
+            cached_probes_locations[probe_coordinates]["country"]
+        )
+    elif cached_probes_locations[probe_coordinates]["locality"] != "False":
+        gmap_location = "%s|%s" % (
+            cached_probes_locations[probe_coordinates]["locality"],
+            cached_probes_locations[probe_coordinates]["country"]
+        )
+    else:
+        gmap_location = "unknown"
+
     if prv_min_rtt < 10:
-        print target_ip, closest_probe, probe_location[closest_probe], prv_min_rtt
+        print target_ip, closest_probe, gmap_location, probe_coordinates, prv_min_rtt
     else:
         print "Error: Couldn't converge to a target. Possibly incomplete presence data"
-        print "The closest probe for %s is %s in %s with RTT %s", (target_ip, closest_probe, probe_location[closest_probe], prv_min_rtt)
+        print "The closest probe for %s is %s in %s with RTT %s", (target_ip, closest_probe, gmap_location, probe_coordinates, prv_min_rtt)
 
 else:
     print "Error: couldn't find any Atlas probe in the requested locations"
