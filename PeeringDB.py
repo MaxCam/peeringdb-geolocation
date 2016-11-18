@@ -13,6 +13,7 @@ class AutSys(object):
 class API(object):
 
     def __init__(self):
+        logging.basicConfig()
         self.logger = logging.getLogger("PeeringDB")
 
     def get_asn_locations(self, target_asn):
