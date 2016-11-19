@@ -4,6 +4,7 @@ from datetime import datetime
 import numpy as np
 import pyasn
 import logging
+import bz2
 # My classes
 import ConfigParser
 import PeeringDB
@@ -12,6 +13,7 @@ from GeoEncoder import GeoEncoder
 
 target_ip = sys.argv[1]
 ipasn_file = sys.argv[2]
+relationships_file = sys.argv[3]
 
 # Map the target IP to the corresponding ASN
 try:
@@ -41,6 +43,42 @@ def read_config():
                 config[section][option] = None
     return config
 
+
+def select_neighboring_probes(candidate_probes, target_asn, relationships_file):
+    """
+    Finds the probes in ASes with a visible interdomain link with the AS that owns the target IP address
+    :param candidate_probes: a list of Atlas.Probe objects
+    :param target_asn: the ASN for which we want to find probes in neighboring ASes
+    :param relationships_file: the CAIDA serial-2 file with the AS relationships:
+                               http://data.caida.org/datasets/as-relationships/serial-2/
+    :return: a list of probes
+    """
+    as_relationships = dict()
+    neighboring_probes = set()
+    try:
+        relatioships_data = bz2.BZ2File(relationships_file)
+        lines = relatioships_data.readlines()
+        for line in lines:
+            line = line.strip()
+            if not line.startswith("#"):
+                lf = line.split("|")
+                if len(lf) == 4:
+                    try:
+                        as_link = "%s %s"  % (lf[0], lf[1])
+                        as_relationships[as_link] = int(lf[2])
+                        reverse_as_link = "%s %s"  % (lf[1], lf[0])
+                        as_relationships[reverse_as_link] = int(lf[2]) * -1
+                    except ValueError:
+                        continue
+
+        for probe in candidate_probes:
+            link_to_test = "%s %s" % (probe.asn, target_asn)
+            if link_to_test in as_relationships:
+                neighboring_probes.add(probe.id)
+    except IOError, e:
+        logging.error("Error while to read the AS relationships file: %s" % str(e))
+
+    return neighboring_probes
 
 # Read the configuration parameters
 config = read_config()
@@ -117,6 +155,10 @@ for location in asn_location:
 for probe_object in atlas_api.select_probes_in_asn(target_asn):
     target_asn_probes.add(probe_object.id)
     probe_objects[probe_object.id] = probe_object
+
+# Get the probes in ASes that are neighboring to the target ASN
+neighboring_probes = select_neighboring_probes(probe_objects.values(), target_asn, relationships_file)
+print "Number of probes in neighboring ASes: ", len(neighboring_probes)
 
 selected_probes = set()
 location_rtt = dict()
