@@ -107,7 +107,7 @@ class Atlas:
                             )
                         )
         except APIResponseError, e:
-            self.logger.error("RIPE Atlas API request failed when requesting probes for at: %s,%s" % (lat, lng))
+            self.logger.error("RIPE Atlas API request failed when requesting probes for coordinates: %s,%s" % (lat, lng))
         return candidate_probes
 
     def ping_measurement(self, af, target_ip, description, packets_num, probes_list):
