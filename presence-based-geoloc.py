@@ -1,6 +1,7 @@
 # coding=latin-1
 import sys, random
 from datetime import datetime
+from time import time
 import numpy as np
 import pyasn
 import logging
@@ -14,6 +15,7 @@ from GeoEncoder import GeoEncoder
 target_ip = sys.argv[1]
 ipasn_file = sys.argv[2]
 relationships_file = sys.argv[3]
+output_file = sys.argv[4]
 
 # Map the target IP to the corresponding ASN
 try:
@@ -240,13 +242,33 @@ if len(selected_probes) > 0:
         cached_probes_locations[probe_coordinates]["country"]
     )
 
-
-    if prv_min_rtt < 10:
+    if prv_min_rtt < 5:
         nearest_facility_city = "False"
         if closest_probe in probes_facility:
-            nearest_facility_city = probes_facility[closest_probe]
+            nearest_facility_city = probes_facility[closest_probe].split("|")[0]
         print "Target [%s,%s] | Closest Probe [%s,%s, %s] | Closest Facility [%s] | Min. RTT [%s] " % \
               (target_ip, target_asn, closest_probe, probe_location, probe_coordinates, nearest_facility_city, prv_min_rtt)
+
+        # Write output to file
+        current_timestamp = int(time())
+        current_datetime = datetime.utcfromtimestamp(current_timestamp)
+        with open(output_file, "a+") as fout:
+            fout.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" %
+                (target_ip,                                                # Column 1: IP address
+                 target_asn,                                               # Column 2: ASN
+                 cached_probes_locations[probe_coordinates]["locality"],   # Column 3: City name of closest probe
+                 cached_probes_locations[probe_coordinates]["admn_lvl_2"], # Column 4: Administrative area of closest probe
+                 cached_probes_locations[probe_coordinates]["country"],    # Column 5: Country ISO code of closest probe
+                 probe_objects[closest_probe].lat,                         # Column 6: Latitude of the closest probe
+                 probe_objects[closest_probe].lng,                         # Column 7: Longitude of the closest probe
+                 prv_min_rtt,                                              # Column 8: Measured minimum RTT
+                 nearest_facility_city,                                    # Column 9: City of nearest facility
+                 current_timestamp,                                        # Column 10: Current timestamp
+                 current_datetime                                          # Column 11: Current datetime (added to facilitate readability)
+                 ) )
+            fout.flush()
+            fout.close()
+
     else:
         logging.info("Couldn't converge to a target. Possibly incomplete presence data.")
         logging.info("The closest probe for [%s,%s] is %s in %s with RTT %s",
