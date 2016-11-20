@@ -44,7 +44,7 @@ def read_config():
     return config
 
 
-def select_neighboring_probes(candidate_probes, target_asn, relationships_file):
+def find_neighboring_probes(candidate_probes, target_asn, relationships_file):
     """
     Finds the probes in ASes with a visible interdomain link with the AS that owns the target IP address
     :param candidate_probes: a list of Atlas.Probe objects
@@ -80,6 +80,10 @@ def select_neighboring_probes(candidate_probes, target_asn, relationships_file):
 
     return neighboring_probes
 
+
+def select_probe_sources(candidate_probes):
+    pass
+
 # Read the configuration parameters
 config = read_config()
 probes_num = int(config["PingParameters"]["probes_per_city"])
@@ -114,6 +118,7 @@ for location in asn_location:
 atlas_api = Atlas(ATLAS_API_KEY)
 target_asn_probes = set()
 candidate_probes = dict()
+probes_facility = dict()
 probe_objects = dict()
 
 for location in asn_location:
@@ -145,6 +150,7 @@ for location in asn_location:
                 candidate_probes[gmap_location] = set()
             for probe_object in available_probes:
                 candidate_probes[gmap_location].add(probe_object.id)
+                probes_facility[probe_object.id] = gmap_location
                 probe_objects[probe_object.id] = probe_object
         else:
             print "Warning: No available probes in the location %s %s: " % (location_data["city"], location_data["country"])
@@ -157,17 +163,35 @@ for probe_object in atlas_api.select_probes_in_asn(target_asn):
     probe_objects[probe_object.id] = probe_object
 
 # Get the probes in ASes that are neighboring to the target ASN
-neighboring_probes = select_neighboring_probes(probe_objects.values(), target_asn, relationships_file)
+neighboring_probes = find_neighboring_probes(probe_objects.values(), target_asn, relationships_file)
+# Get probes in neighbors for each location
+
+
 print "Number of probes in neighboring ASes: ", len(neighboring_probes)
 
 selected_probes = set()
 location_rtt = dict()
 for location in candidate_probes:
-    if probes_num > len(candidate_probes[location]):
+    # Start the probe selection by getting probes in neighboring ASes
+    selected_neighboring_asns = set()
+    selected_neighboring_probes = set()
+    for probe_id in candidate_probes[location]:
+        if probe_id in neighboring_probes:
+            probe_asn = probe_objects[probe_id].asn
+            if probe_asn not in selected_neighboring_asns:
+                selected_neighboring_probes.add(probe_id)
+                selected_neighboring_asns.add(probe_asn)
+            if len(selected_neighboring_probes) >= probes_num:
+                break
+    selected_probes |= selected_neighboring_probes
+
+    # If we need more probes sample randomly
+    if (probes_num - len(selected_neighboring_probes)) > len(candidate_probes[location]):
         selected_probes |= set(candidate_probes[location])
     else:
-        selected_probes |= set(random.sample(candidate_probes[location], probes_num))
+        selected_probes |= set(random.sample(candidate_probes[location], (probes_num - len(selected_neighboring_probes))))
     print location, len(selected_probes), probes_num
+
 selected_probes |= target_asn_probes
 print "Number of candidate probes: %s" % len(selected_probes)
 print "Number of candidate cities: %s" % len(candidate_probes.keys())
@@ -208,10 +232,15 @@ if len(selected_probes) > 0:
 
 
     if prv_min_rtt < 10:
-        print target_ip, closest_probe, probe_location, probe_coordinates, prv_min_rtt
+        nearest_facility_city = "False"
+        if closest_probe in probes_facility:
+            nearest_facility_city = probes_facility[closest_probe]
+        print "Target [%s,%s] | Closest Probe [%s,%s, %s] | Closest Facility [%s] | Min. RTT [%s] " % \
+              (target_ip, target_asn, closest_probe, probe_location, probe_coordinates, nearest_facility_city, prv_min_rtt)
     else:
-        print "Error: Couldn't converge to a target. Possibly incomplete presence data"
-        print "The closest probe for %s is %s in %s with RTT %s", (target_ip, closest_probe, probe_location, probe_coordinates, prv_min_rtt)
+        logging.info("Couldn't converge to a target. Possibly incomplete presence data.")
+        logging.info("The closest probe for [%s,%s] is %s in %s with RTT %s",
+                     (target_ip, target_asn, closest_probe, probe_location, probe_coordinates, prv_min_rtt))
 
 else:
     print "Error: couldn't find any Atlas probe in the requested locations"
