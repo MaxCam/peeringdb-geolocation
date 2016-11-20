@@ -138,7 +138,7 @@ class GeoEncoder(object):
         """
         city_coordinates = dict()
         try:
-            location = self.gmap_geolocator.geocode(target_location, timeout=30)
+            location = self.gmap_geolocator.geocode(target_location, timeout=30, language='en')
             if location is not None:
                 if "geometry" in location.raw and "location" in location.raw["geometry"]:
                     city_coordinates["lat"] = location.raw["geometry"]["location"]["lat"]
