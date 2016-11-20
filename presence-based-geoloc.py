@@ -25,6 +25,17 @@ except IOError:
     sys.exit(-1)
 
 
+def get_extra_locations(target_asn):
+    extra_locations = {
+        196844: {"Poznan|PL"}
+    }
+
+    if target_asn in extra_locations:
+        return  extra_locations[target_asn]
+    else:
+        return set()
+
+
 def read_config():
     """
     Reads the configuration parameters and maps each section and option in the configuration file to a dictionary
@@ -105,6 +116,8 @@ asn_location = peeringdb_api.get_asn_locations(target_asn).locations
 maxmind_location = geo_encoder.query_maxmind_location(target_ip)
 if maxmind_location is not False:
     asn_location.add(maxmind_location)
+
+asn_location |= get_extra_locations(target_asn)
 
 print "Possible locations:"
 for location in asn_location:
