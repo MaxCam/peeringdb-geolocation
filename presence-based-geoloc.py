@@ -81,9 +81,6 @@ def find_neighboring_probes(candidate_probes, target_asn, relationships_file):
     return neighboring_probes
 
 
-def select_probe_sources(candidate_probes):
-    pass
-
 # Read the configuration parameters
 config = read_config()
 probes_num = int(config["PingParameters"]["probes_per_city"])
