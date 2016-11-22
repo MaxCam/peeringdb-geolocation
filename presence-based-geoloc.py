@@ -6,26 +6,17 @@ import numpy as np
 import pyasn
 import logging
 import bz2
-# My classes
+import argparse
+# My modules
 import ConfigParser
 import PeeringDB
 from Atlas import Atlas
 from GeoEncoder import GeoEncoder
+import arg_parser
 
-target_ip = sys.argv[1]
-ipasn_file = sys.argv[2]
-relationships_file = sys.argv[3]
-output_file = sys.argv[4]
-
-# Map the target IP to the corresponding ASN
-try:
-    asndb = pyasn.pyasn(ipasn_file)
-    target_asn, prefix = asndb.lookup(target_ip)
-except IOError:
-    logging.critical("Could not read the pyasn file `%s`. "
-                     "Please enter the correct file location." % ipasn_file)
-    sys.exit(-1)
-
+target_ips, asndb, as_relationships, output_file = arg_parser.read_user_arguments()
+target_ip = target_ips.pop()
+target_asn, prefix = asndb.lookup(target_ip)
 
 def get_extra_locations(target_asn):
     extra_locations = {
@@ -57,39 +48,20 @@ def read_config():
     return config
 
 
-def find_neighboring_probes(candidate_probes, target_asn, relationships_file):
+def find_neighboring_probes(candidate_probes, target_asn, as_relationships):
     """
     Finds the probes in ASes with a visible interdomain link with the AS that owns the target IP address
     :param candidate_probes: a list of Atlas.Probe objects
     :param target_asn: the ASN for which we want to find probes in neighboring ASes
-    :param relationships_file: the CAIDA serial-2 file with the AS relationships:
-                               http://data.caida.org/datasets/as-relationships/serial-2/
+    :param as_relationships: dictionary with the mapping between AS links and AS relationship types
     :return: a list of probes
     """
-    as_relationships = dict()
     neighboring_probes = set()
-    try:
-        relatioships_data = bz2.BZ2File(relationships_file)
-        lines = relatioships_data.readlines()
-        for line in lines:
-            line = line.strip()
-            if not line.startswith("#"):
-                lf = line.split("|")
-                if len(lf) == 4:
-                    try:
-                        as_link = "%s %s"  % (lf[0], lf[1])
-                        as_relationships[as_link] = int(lf[2])
-                        reverse_as_link = "%s %s"  % (lf[1], lf[0])
-                        as_relationships[reverse_as_link] = int(lf[2]) * -1
-                    except ValueError:
-                        continue
 
-        for probe in candidate_probes:
-            link_to_test = "%s %s" % (probe.asn, target_asn)
-            if link_to_test in as_relationships:
-                neighboring_probes.add(probe.id)
-    except IOError, e:
-        logging.error("Error while to read the AS relationships file: %s" % str(e))
+    for probe in candidate_probes:
+        link_to_test = "%s %s" % (probe.asn, target_asn)
+        if link_to_test in as_relationships:
+            neighboring_probes.add(probe.id)
 
     return neighboring_probes
 
@@ -175,9 +147,7 @@ for probe_object in atlas_api.select_probes_in_asn(target_asn):
     probe_objects[probe_object.id] = probe_object
 
 # Get the probes in ASes that are neighboring to the target ASN
-neighboring_probes = find_neighboring_probes(probe_objects.values(), target_asn, relationships_file)
-# Get probes in neighbors for each location
-
+neighboring_probes = find_neighboring_probes(probe_objects.values(), target_asn, as_relationships)
 
 print "Number of probes in neighboring ASes: ", len(neighboring_probes)
 
