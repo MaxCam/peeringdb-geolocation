@@ -141,7 +141,7 @@ class Atlas:
             try:
                 (is_success, response) = atlas_request.create()
 
-                print response, len(','.join(str(x) for x in probes_list))
+                #print response, len(','.join(str(x) for x in probes_list))
 
                 # Example of error response:
                 # {u'error': {u'status': 400, u'code': 104, u'detail': u'value: Ensure this value has at most 8192 characters (it has 11948).', u'title': u'Bad Request'}}
