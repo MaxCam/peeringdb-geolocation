@@ -10,6 +10,14 @@ class AutSys(object):
         self.locations = locations
 
 
+class IxpIP(object):
+    def __init__(self, ip, ixp_id, ixp_name, asn):
+        self.ip = ip
+        self.ixp_id = ixp_id
+        self.ixp_name = ixp_name
+        self.asn = asn
+
+
 class API(object):
 
     def __init__(self):
@@ -88,6 +96,20 @@ class API(object):
             ixp_locations.add(fac_location)
 
         return ixp_locations
+
+    def get_ixp_ips(self):
+        """
+        Get the the IXP IPs and the corresponding AS members
+        :return: A dictionary that maps IPs to IxpIP objects
+        """
+        endpoint = "netixlan"
+        netixlan_info = self.get_request(endpoint)
+        ixp_lan_addresses = dict()
+        for ixlan in netixlan_info["data"]:
+            ixp_ip = IxpIP(ixlan["ipaddr4"], ixlan["ix_id"], ixlan["name"], ixlan["asn"])
+            ixp_lan_addresses[ixlan["ipaddr4"]] = ixp_ip
+
+        return ixp_lan_addresses
 
     def get_request(self, endpoint):
         """
