@@ -16,13 +16,18 @@ import arg_parser
 
 
 def get_extra_locations(target_asn):
+    # TODO Read the values bellow from a file or database
     extra_locations = {
         196844: {"Poznan|PL"},
         57023: {"Madrid|ES", "Valencia|ES", "Oran|DZ"}, # http://www.oranlink.net/
         15772: {"Donetsk|UA", "Dnipropetrovsk|UA", "Odessa|UA", "Lviv|UA", "Simferopol|UA", "Kharkov|UA"}, # http://support.wnet.ua/lg.php
         21011: {"Lviv|UA", "Kharkov|UA"}, # http://lg.topnet.ua/lg/lg.cgi
         12637: {"Frosinone|IT", "Rome|IT", "Turin|IT"}, # https://www.seeweb.it/data-center/i-nostri-data-center
-        35297: {"Lviv|UA", "Odessa|UA", "Kharkov|UA"}
+        35297: {"Lviv|UA", "Odessa|UA", "Kharkov|UA"}, # https://lg.dataline.ua/cgi-bin/lg.cgi
+        8866 : {"Sofia|BG", "Manchester|GB"}, # https://cloudscene.com/service-provider/vivacom
+        15589: {"Bratislava|SK", "Bucharest|RO", "Budapest|HU", "Frankfurt|DE", "Kiev|UA", "London|GB", "Prague|CZ", "Sofia|BG", "Vienna|AT"}, #  http://www.clouditalia.com/index.php/en/infrastruttura
+        3216: {"Kazan|RU", "Ufa|RU", "Samara|RU", "Saint Petersburg|RU", "Irkutsk|RU", "Khabarovsk|RU", "Novgorod|RU", "Novosibirsk|RU", "Krasnoyarsk|RU", "Ekaterinburg|RU", "Chelyabinsk|RU", "Rostov-na-Donu|RU", "Krasnodar|RU"}, # http://bgp.he.net/AS3216#_irr
+        20485: {"Chelyabinsk|RU", "Ekaterinburg|RU", "Khabarovsk|RU", "Novgorod|RU", "Novosibirsk|RU", "Rostov-na-Donu|RU", "Saint Petersburg|RU", "Yaroslavl|RU"}, # http://lg.ttk.ru/
     }
 
     if target_asn in extra_locations:
@@ -128,7 +133,8 @@ for target_asn in geolocation_targets:
     '''
     Step 2: Get the candidate AS locations based on presence information at IXPs and Facilities
     '''
-    logger.info("Getting the locations of AS%s" % target_asn)
+    #logger.info("Getting the locations of AS%s" % target_asn)
+    print("Getting the locations of AS%s" % target_asn)
     asn_locations[target_asn] |= peeringdb_api.get_asn_locations(target_asn).locations
 
     asn_locations[target_asn] |= get_extra_locations(target_asn)
@@ -195,7 +201,7 @@ for target_asn in geolocation_targets:
 
     for target_ip in  geolocation_targets[target_asn]:
 
-        logger.info("Running geolocation for IP %s in AS%s" % (target_ip, target_asn))
+        #logger.info("Running geolocation for IP %s in AS%s" % (target_ip, target_asn))
         #TODO Order countries by number of presences to find the main country from which we start the measurements
 
         '''
@@ -244,56 +250,61 @@ for target_asn in geolocation_targets:
                     prv_min_rtt = probe_min_rtt
                     closest_probe = probe_id
 
-            # Get the location of the closes probe
-            # Check if we have obtained the location for the probe coordinates previously ...
-            probe_coordinates = "%s,%s" % (probe_objects[closest_probe].lat, probe_objects[closest_probe].lng)
-            if not probe_coordinates in cached_probes_locations:
-                reverse_location = geo_encoder.query_coordinates_location(probe_objects[closest_probe].lat, probe_objects[closest_probe].lng)
-                # write the reverse location in the probes_locations file
-                geo_encoder.write_coordinates_location(probe_objects[closest_probe].lat, probe_objects[closest_probe].lng, reverse_location)
-                cached_probes_locations[probe_coordinates] = {
-                    "locality": reverse_location["locality"],
-                    "admn_lvl_2": reverse_location["admn_lvl_2"],
-                    "country": reverse_location["country"]
-                }
-
-            probe_location = "%s|%s|%s" % (
-                cached_probes_locations[probe_coordinates]["locality"],
-                cached_probes_locations[probe_coordinates]["admn_lvl_2"],
-                cached_probes_locations[probe_coordinates]["country"]
-            )
-
-            if prv_min_rtt < 5:
-                nearest_facility_city = "False"
-                if closest_probe in probes_facility:
-                    nearest_facility_city = probes_facility[closest_probe].split("|")[0]
-                print "Target [%s,%s] | Closest Probe [%s,%s, %s] | Closest Facility [%s] | Min. RTT [%s] " % \
-                      (target_ip, target_asn, closest_probe, probe_location, probe_coordinates, nearest_facility_city, prv_min_rtt)
-
-                # Write output to file
-                current_timestamp = int(time())
-                current_datetime = datetime.utcfromtimestamp(current_timestamp)
-                with open(output_file, "a+") as fout:
-                    fout.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" %
-                        (target_ip,                                                # Column 1: IP address
-                         target_asn,                                               # Column 2: ASN
-                         cached_probes_locations[probe_coordinates]["locality"],   # Column 3: City name of closest probe
-                         cached_probes_locations[probe_coordinates]["admn_lvl_2"], # Column 4: Administrative area of closest probe
-                         cached_probes_locations[probe_coordinates]["country"],    # Column 5: Country ISO code of closest probe
-                         probe_objects[closest_probe].lat,                         # Column 6: Latitude of the closest probe
-                         probe_objects[closest_probe].lng,                         # Column 7: Longitude of the closest probe
-                         prv_min_rtt,                                              # Column 8: Measured minimum RTT
-                         nearest_facility_city,                                    # Column 9: City of nearest facility
-                         current_timestamp,                                        # Column 10: Current timestamp
-                         current_datetime                                          # Column 11: Current datetime (added to facilitate readability)
-                         ) )
-                    fout.flush()
-                    fout.close()
-
+            if closest_probe == 0:
+                logger.error(
+                    "The destination IP %s was unreachable from every probe." % target_ip
+                )
             else:
-                logger.warning("Couldn't converge to a target for IP %s. Possibly incomplete presence data." % target_ip)
-                logger.info("The closest probe for [%s,%s] is %s in %s with RTT %s" %
-                             (target_ip, target_asn, closest_probe, probe_location, prv_min_rtt))
+                # Get the location of the closes probe
+                # Check if we have obtained the location for the probe coordinates previously ...
+                probe_coordinates = "%s,%s" % (probe_objects[closest_probe].lat, probe_objects[closest_probe].lng)
+                if not probe_coordinates in cached_probes_locations:
+                    reverse_location = geo_encoder.query_coordinates_location(probe_objects[closest_probe].lat, probe_objects[closest_probe].lng)
+                    # write the reverse location in the probes_locations file
+                    geo_encoder.write_coordinates_location(probe_objects[closest_probe].lat, probe_objects[closest_probe].lng, reverse_location)
+                    cached_probes_locations[probe_coordinates] = {
+                        "locality": reverse_location["locality"],
+                        "admn_lvl_2": reverse_location["admn_lvl_2"],
+                        "country": reverse_location["country"]
+                    }
+
+                probe_location = "%s|%s|%s" % (
+                    cached_probes_locations[probe_coordinates]["locality"],
+                    cached_probes_locations[probe_coordinates]["admn_lvl_2"],
+                    cached_probes_locations[probe_coordinates]["country"]
+                )
+
+                if prv_min_rtt < 5:
+                    nearest_facility_city = "False"
+                    if closest_probe in probes_facility:
+                        nearest_facility_city = probes_facility[closest_probe].split("|")[0]
+                    print "Target [%s,%s] | Closest Probe [%s,%s, %s] | Closest Facility [%s] | Min. RTT [%s] " % \
+                          (target_ip, target_asn, closest_probe, probe_location, probe_coordinates, nearest_facility_city, prv_min_rtt)
+
+                    # Write output to file
+                    current_timestamp = int(time())
+                    current_datetime = datetime.utcfromtimestamp(current_timestamp)
+                    with open(output_file, "a+") as fout:
+                        fout.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" %
+                            (target_ip,                                                # Column 1: IP address
+                             target_asn,                                               # Column 2: ASN
+                             cached_probes_locations[probe_coordinates]["locality"],   # Column 3: City name of closest probe
+                             cached_probes_locations[probe_coordinates]["admn_lvl_2"], # Column 4: Administrative area of closest probe
+                             cached_probes_locations[probe_coordinates]["country"],    # Column 5: Country ISO code of closest probe
+                             probe_objects[closest_probe].lat,                         # Column 6: Latitude of the closest probe
+                             probe_objects[closest_probe].lng,                         # Column 7: Longitude of the closest probe
+                             prv_min_rtt,                                              # Column 8: Measured minimum RTT
+                             nearest_facility_city,                                    # Column 9: City of nearest facility
+                             current_timestamp,                                        # Column 10: Current timestamp
+                             current_datetime                                          # Column 11: Current datetime (added to facilitate readability)
+                             ) )
+                        fout.flush()
+                        fout.close()
+
+                else:
+                    logger.warning("Couldn't converge to a target for IP %s. Possibly incomplete presence data." % target_ip)
+                    logger.info("The closest probe for [%s,%s] is %s in %s with RTT %s" %
+                                 (target_ip, target_asn, closest_probe, probe_location, prv_min_rtt))
 
         else:
             print "Error: couldn't find any Atlas probe in the requested locations"
