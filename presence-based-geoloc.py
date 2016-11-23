@@ -20,6 +20,9 @@ def get_extra_locations(target_asn):
         196844: {"Poznan|PL"},
         57023: {"Madrid|ES", "Valencia|ES", "Oran|DZ"}, # http://www.oranlink.net/
         15772: {"Donetsk|UA", "Dnipropetrovsk|UA", "Odessa|UA", "Lviv|UA", "Simferopol|UA", "Kharkov|UA"}, # http://support.wnet.ua/lg.php
+        21011: {"Lviv|UA", "Kharkov|UA"}, # http://lg.topnet.ua/lg/lg.cgi
+        12637: {"Frosinone|IT", "Rome|IT", "Turin|IT"}, # https://www.seeweb.it/data-center/i-nostri-data-center
+        35297: {"Lviv|UA", "Odessa|UA", "Kharkov|UA"}
     }
 
     if target_asn in extra_locations:
@@ -87,6 +90,8 @@ cached_location_coordinates = geo_encoder.read_location_coordinates()
 cached_probes_locations = geo_encoder.read_coordinates_location()
 
 peeringdb_api = PeeringDB.API()
+ixp_lan_addresses = peeringdb_api.get_ixp_ips()
+
 atlas_api = Atlas(ATLAS_API_KEY)
 
 # TODO first check if the IP belongs to an IXP member
@@ -98,7 +103,12 @@ maxmind_locations = dict()
 asn_locations = dict()
 
 for target_ip in target_ips:
-    target_asn, prefix = asndb.lookup(target_ip)
+    # First check if the IP belongs to an IXP
+    if target_ip in ixp_lan_addresses:
+        target_asn = ixp_lan_addresses[target_ip].asn
+    else:
+        target_asn, prefix = asndb.lookup(target_ip)
+
     if target_asn not in geolocation_targets:
         geolocation_targets[target_asn] = set()
         asn_locations[target_asn] = set()
