@@ -61,15 +61,16 @@ class Atlas:
         filters = {"asn_v4": target_asn, "status": 1}
         probes = ProbeRequest(**filters)
         for probe in probes:
-            candidate_probes.add(
-                Probe(
-                    probe["id"],
-                    probe["asn_v4"],
-                    probe["geometry"]["coordinates"][1],
-                    probe["geometry"]["coordinates"][0],
-                    probe["country_code"]
+            if probe["geometry"] is not None:
+                candidate_probes.add(
+                    Probe(
+                        probe["id"],
+                        probe["asn_v4"],
+                        probe["geometry"]["coordinates"][1],
+                        probe["geometry"]["coordinates"][0],
+                        probe["country_code"]
+                    )
                 )
-            )
 
         return candidate_probes
 
@@ -142,7 +143,7 @@ class Atlas:
                 (is_success, response) = atlas_request.create()
 
                 #print response, len(','.join(str(x) for x in probes_list))
-
+                #print response
                 # Example of error response:
                 # {u'error': {u'status': 400, u'code': 104, u'detail': u'value: Ensure this value has at most 8192 characters (it has 11948).', u'title': u'Bad Request'}}
                 if "error" in response:
