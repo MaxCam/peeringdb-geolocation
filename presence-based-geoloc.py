@@ -15,27 +15,6 @@ from GeoEncoder import GeoEncoder
 import arg_parser
 
 
-def get_extra_locations(target_asn):
-    # TODO Read the values bellow from a file or database
-    extra_locations = {
-        196844: {"Poznan|PL"},
-        57023: {"Madrid|ES", "Valencia|ES", "Oran|DZ"}, # http://www.oranlink.net/
-        15772: {"Donetsk|UA", "Dnipropetrovsk|UA", "Odessa|UA", "Lviv|UA", "Simferopol|UA", "Kharkov|UA"}, # http://support.wnet.ua/lg.php
-        21011: {"Lviv|UA", "Kharkov|UA"}, # http://lg.topnet.ua/lg/lg.cgi
-        12637: {"Frosinone|IT", "Rome|IT", "Turin|IT"}, # https://www.seeweb.it/data-center/i-nostri-data-center
-        35297: {"Lviv|UA", "Odessa|UA", "Kharkov|UA"}, # https://lg.dataline.ua/cgi-bin/lg.cgi
-        8866 : {"Sofia|BG", "Manchester|GB"}, # https://cloudscene.com/service-provider/vivacom
-        15589: {"Bratislava|SK", "Bucharest|RO", "Budapest|HU", "Frankfurt|DE", "Kiev|UA", "London|GB", "Prague|CZ", "Sofia|BG", "Vienna|AT"}, #  http://www.clouditalia.com/index.php/en/infrastruttura
-        3216: {"Kazan|RU", "Ufa|RU", "Samara|RU", "Saint Petersburg|RU", "Irkutsk|RU", "Khabarovsk|RU", "Novgorod|RU", "Novosibirsk|RU", "Krasnoyarsk|RU", "Ekaterinburg|RU", "Chelyabinsk|RU", "Rostov-na-Donu|RU", "Krasnodar|RU"}, # http://bgp.he.net/AS3216#_irr
-        20485: {"Chelyabinsk|RU", "Ekaterinburg|RU", "Khabarovsk|RU", "Novgorod|RU", "Novosibirsk|RU", "Rostov-na-Donu|RU", "Saint Petersburg|RU", "Yaroslavl|RU"}, # http://lg.ttk.ru/
-    }
-
-    if target_asn in extra_locations:
-        return  extra_locations[target_asn]
-    else:
-        return set()
-
-
 def read_config():
     """
     Reads the configuration parameters and maps each section and option in the configuration file to a dictionary
@@ -99,8 +78,7 @@ ixp_lan_addresses = peeringdb_api.get_ixp_ips()
 
 atlas_api = Atlas(ATLAS_API_KEY)
 
-# TODO first check if the IP belongs to an IXP member
-target_ips, asndb, as_relationships, output_file = arg_parser.read_user_arguments()
+target_ips, asndb, as_relationships, extra_locations, output_file = arg_parser.read_user_arguments()
 
 # Group the geo-location targets per ASN
 geolocation_targets = dict()
@@ -133,11 +111,11 @@ for target_asn in geolocation_targets:
     '''
     Step 2: Get the candidate AS locations based on presence information at IXPs and Facilities
     '''
-    #logger.info("Getting the locations of AS%s" % target_asn)
     print("Getting the locations of AS%s" % target_asn)
     asn_locations[target_asn] |= peeringdb_api.get_asn_locations(target_asn).locations
 
-    asn_locations[target_asn] |= get_extra_locations(target_asn)
+    if target_asn in extra_locations:
+        asn_locations[target_asn] |= extra_locations[target_asn]
 
     #print "Possible candidate locations: "
     #for location in asn_locations[target_asn]:
@@ -163,9 +141,9 @@ for target_asn in geolocation_targets:
 
         if location_data is not False:
             gmap_location = "%s|%s" % (location_data["city"], location_data["country"])
-            # If we have found the probes in this location for a previous AS don't search again
+            # If we have found the probes in this location in a previous iteration don't search again
             if gmap_location not in candidate_probes:
-                #print "Getting probes for location: %s" % gmap_location
+                print "Getting probes for location: %s" % gmap_location
                 # Get the probes in this location
                 available_probes = atlas_api.select_probes_in_location(
                     location_data["lat"],

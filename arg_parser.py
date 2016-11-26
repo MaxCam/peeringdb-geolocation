@@ -5,7 +5,34 @@ import sys
 import os.path
 import bz2
 import pyasn
-import string
+
+
+def read_presence_data(presence_file):
+    """
+    Reads the presence data provided in the corresponding file
+    :param presence_file: the value of the -p/--presence argument
+    :return: a dictionary that maps ASNs to city|country locations
+    """
+    global logger
+    extra_locations = dict()
+    if not os.path.isfile(presence_file):
+        logger.error("The file `%s` provided by the -p/--presence argument does not exist." % presence_file )
+    else:
+        try:
+            with open(presence_file) as fin:
+                for line in fin:
+                    if not line.startswith("#"):
+                        lf = line.strip().split()
+                        if len(lf) > 2: # expected format: ASN<tab>City<tab>Country [possible comment]
+                            asn = int(lf[0])
+                            if asn not in extra_locations:
+                                extra_locations[asn] = set()
+                            extra_locations[asn].add("%s|%s" % (lf[1], lf[2]))
+        except IOError, e:
+            logger.critical("Failed to read the file `%s` provided by the -p/--file presence. Error: %s" %
+                            presence_file, str(e))
+    return extra_locations
+
 
 def is_valid_ipv4_address(address):
     """
@@ -134,6 +161,12 @@ def read_user_arguments():
                         # the CAIDA serial-2 file with the AS relationships:
                         # http://data.caida.org/datasets/as-relationships/serial-2/
 
+    parser.add_argument('-p', '--presence',
+                        type=str,
+                        required=False,
+                        help="Path to file with AS presence data")
+                        # Format ASN<tab>City<tab>Country
+
     parser.add_argument('-o', '--output',
                         type=str,
                         required=True,
@@ -161,6 +194,11 @@ def read_user_arguments():
                          "Please enter the correct file location." % args.ipasn)
         sys.exit(-1)
 
+    # Read the provided presence AS data
+    presence_data = dict()
+    if args.presence is not None:
+        presence_data = read_presence_data(args.presence)
+
     if not os.access(os.path.dirname(args.output), os.W_OK):
         logging.critical("The programe does not have write permissions to the output file location `%s` "
                                "provided by the -o/--output argument. " % args.output)
@@ -171,6 +209,7 @@ def read_user_arguments():
     # So, I will leave it commented-out unless we experience probles related with filenaming conventions in
     # other operatin systems.
     else:
+        import string
         valid_chars = "-_.()/+=: %s%s" % (string.ascii_letters, string.digits)
         valid_chars = frozenset(valid_chars)
         invalid_chars = {c for c in args.output if c not in valid_chars}
@@ -180,7 +219,7 @@ def read_user_arguments():
             sys.exit(-1)
     '''
 
-    return target_addresses, asndb, as_relationships, args.output
+    return target_addresses, asndb, as_relationships, presence_data, args.output
 
 logging.basicConfig()
 logger = logging.getLogger("ArgParser")
