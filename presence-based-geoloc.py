@@ -78,7 +78,7 @@ ixp_lan_addresses = peeringdb_api.get_ixp_ips()
 
 atlas_api = Atlas(ATLAS_API_KEY)
 
-target_ips, asndb, as_relationships, extra_locations, output_file = arg_parser.read_user_arguments()
+target_ips, asndb, as_relationships, extra_locations, already_geolocated_ips, output_file = arg_parser.read_user_arguments()
 
 # Group the geo-location targets per ASN
 geolocation_targets = dict()
@@ -86,22 +86,25 @@ maxmind_locations = dict()
 asn_locations = dict()
 
 for target_ip in target_ips:
-    # First check if the IP belongs to an IXP
-    if target_ip in ixp_lan_addresses:
-        target_asn = ixp_lan_addresses[target_ip].asn
+    if target_ip in already_geolocated_ips:
+        logger.info("Skipping IP %s because it is already geolocated." % target_ip)
     else:
-        target_asn, prefix = asndb.lookup(target_ip)
+        # First check if the IP belongs to an IXP
+        if target_ip in ixp_lan_addresses:
+            target_asn = ixp_lan_addresses[target_ip].asn
+        else:
+            target_asn, prefix = asndb.lookup(target_ip)
 
-    if target_asn not in geolocation_targets:
-        geolocation_targets[target_asn] = set()
-        asn_locations[target_asn] = set()
-    geolocation_targets[target_asn].add(target_ip)
+        if target_asn not in geolocation_targets:
+            geolocation_targets[target_asn] = set()
+            asn_locations[target_asn] = set()
+        geolocation_targets[target_asn].add(target_ip)
 
-    # Add the location provided by MaxMind in the list of possible locations in which we should ping
-    maxmind_location = geo_encoder.query_maxmind_location(target_ip)
-    if maxmind_location is not False:
-        maxmind_locations[target_ip] = maxmind_location
-        asn_locations[target_asn].add(maxmind_location)
+        # Add the location provided by MaxMind in the list of possible locations in which we should ping
+        maxmind_location = geo_encoder.query_maxmind_location(target_ip)
+        if maxmind_location is not False:
+            maxmind_locations[target_ip] = maxmind_location
+            asn_locations[target_asn].add(maxmind_location)
 
 
 candidate_probes = dict()

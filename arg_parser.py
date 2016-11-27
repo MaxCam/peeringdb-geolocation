@@ -130,6 +130,31 @@ def read_as_relationships(relationships_file):
     return as_relationships
 
 
+def validate_output_file(output_file):
+    """
+    Checks if the output file is writable, and if it exists reads IPs already geolocated in it
+    :param output_file:
+    :return:
+    """
+    already_geolocated = set()
+    # Read the provided presence AS data
+    if not os.access(os.path.dirname(output_file), os.W_OK):
+        logging.critical("The programe does not have write permissions to the output file location `%s` "
+                         "provided by the -o/--output argument. " % args.output)
+        sys.exit(-1)
+    elif os.path.isfile(output_file):
+        try:
+            with open(output_file) as fin:
+                for line in fin:
+                    if not line.startswith("#"):
+                        lf = line.strip().split("\t")
+                        if len(lf) > 0:
+                            already_geolocated.add(lf[0])
+        except IOError:
+            pass
+
+    return already_geolocated
+
 def read_user_arguments():
     """
     Reads and validates the command-line arguments provided by the user
@@ -199,11 +224,7 @@ def read_user_arguments():
     if args.presence is not None:
         presence_data = read_presence_data(args.presence)
 
-    if not os.access(os.path.dirname(args.output), os.W_OK):
-        logging.critical("The programe does not have write permissions to the output file location `%s` "
-                               "provided by the -o/--output argument. " % args.output)
-        sys.exit(-1)
-
+    already_geolocated_ips = validate_output_file(args.output)
     '''
     # Linux permits pretty much any character in the file name so the filename check bellow may be unnecessary.
     # So, I will leave it commented-out unless we experience probles related with filenaming conventions in
@@ -219,7 +240,7 @@ def read_user_arguments():
             sys.exit(-1)
     '''
 
-    return target_addresses, asndb, as_relationships, presence_data, args.output
+    return target_addresses, asndb, as_relationships, presence_data, already_geolocated_ips, args.output
 
 logging.basicConfig()
 logger = logging.getLogger("ArgParser")
