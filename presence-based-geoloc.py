@@ -255,37 +255,44 @@ for target_asn in geolocation_targets:
                     cached_probes_locations[probe_coordinates]["country"]
                 )
 
+                nearest_facility_city = "False"
+                if closest_probe in probes_facility:
+                    nearest_facility_city = probes_facility[closest_probe].split("|")[0]
+                output_line = "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n"
+
                 if prv_min_rtt < 5:
-                    nearest_facility_city = "False"
-                    if closest_probe in probes_facility:
-                        nearest_facility_city = probes_facility[closest_probe].split("|")[0]
                     print "Target [%s,%s] | Closest Probe [%s,%s, %s] | Closest Facility [%s] | Min. RTT [%s] " % \
-                          (target_ip, target_asn, closest_probe, probe_location, probe_coordinates, nearest_facility_city, prv_min_rtt)
-
-                    # Write output to file
-                    current_timestamp = int(time())
-                    current_datetime = datetime.utcfromtimestamp(current_timestamp)
-                    with open(output_file, "a+") as fout:
-                        fout.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" %
-                            (target_ip,                                                # Column 1: IP address
-                             target_asn,                                               # Column 2: ASN
-                             cached_probes_locations[probe_coordinates]["locality"],   # Column 3: City name of closest probe
-                             cached_probes_locations[probe_coordinates]["admn_lvl_2"], # Column 4: Administrative area of closest probe
-                             cached_probes_locations[probe_coordinates]["country"],    # Column 5: Country ISO code of closest probe
-                             probe_objects[closest_probe].lat,                         # Column 6: Latitude of the closest probe
-                             probe_objects[closest_probe].lng,                         # Column 7: Longitude of the closest probe
-                             prv_min_rtt,                                              # Column 8: Measured minimum RTT
-                             nearest_facility_city,                                    # Column 9: City of nearest facility
-                             current_timestamp,                                        # Column 10: Current timestamp
-                             current_datetime                                          # Column 11: Current datetime (added to facilitate readability)
-                             ) )
-                        fout.flush()
-                        fout.close()
-
+                          (target_ip, target_asn, closest_probe, probe_location, probe_coordinates,
+                           nearest_facility_city, prv_min_rtt)
                 else:
-                    logger.warning("Couldn't converge to a target for IP %s. Possibly incomplete presence data." % target_ip)
+                    logger.warning(
+                        "Couldn't converge to a target for IP %s. Possibly incomplete presence data." % target_ip)
                     logger.info("The closest probe for [%s,%s] is %s in %s with RTT %s" %
-                                 (target_ip, target_asn, closest_probe, probe_location, prv_min_rtt))
+                                (target_ip, target_asn, closest_probe, probe_location, prv_min_rtt))
+                    output_line = "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s # Too high minimum RTT\n"
+
+                # Save all result, even those above the RTT threshold. Since RTT is part of the output
+                # it can be used to decide if geolocation was successful or not
+
+                # Write output to file
+                current_timestamp = int(time())
+                current_datetime = datetime.utcfromtimestamp(current_timestamp)
+                with open(output_file, "a+") as fout:
+                    fout.write(output_line %
+                        (target_ip,                                                # Column 1: IP address
+                         target_asn,                                               # Column 2: ASN
+                         cached_probes_locations[probe_coordinates]["locality"],   # Column 3: City name of closest probe
+                         cached_probes_locations[probe_coordinates]["admn_lvl_2"], # Column 4: Administrative area of closest probe
+                         cached_probes_locations[probe_coordinates]["country"],    # Column 5: Country ISO code of closest probe
+                         probe_objects[closest_probe].lat,                         # Column 6: Latitude of the closest probe
+                         probe_objects[closest_probe].lng,                         # Column 7: Longitude of the closest probe
+                         prv_min_rtt,                                              # Column 8: Measured minimum RTT
+                         nearest_facility_city,                                    # Column 9: City of nearest facility
+                         current_timestamp,                                        # Column 10: Current timestamp
+                         current_datetime                                          # Column 11: Current datetime (added to facilitate readability)
+                         ) )
+                    fout.flush()
+                    fout.close()
 
         else:
             print "Error: couldn't find any Atlas probe in the requested locations"
