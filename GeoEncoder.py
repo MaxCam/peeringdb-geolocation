@@ -147,7 +147,7 @@ class GeoEncoder(object):
                     for address_component in location.raw["address_components"]:
                         if "types" in address_component:
                             if "locality" in address_component["types"]:
-                                city_coordinates["city"] = address_component["short_name"]
+                                city_coordinates["city"] = address_component["long_name"]
                             elif "country" in address_component["types"]:
                                 city_coordinates["country"] = address_component["short_name"]
         except geopy.exc.GeocoderQueryError, e:
@@ -175,15 +175,19 @@ class GeoEncoder(object):
             "country": False
         }
 
-        if "address_components" in reverse_location.raw:
-            for address_component in reverse_location.raw["address_components"]:
-                if "types" in address_component:
-                    if "administrative_area_level_2" in address_component["types"]:
-                        coordinates_data["admn_lvl_2"] = address_component["short_name"]
-                    if "locality" in address_component["types"]:
-                        coordinates_data["locality"] = address_component["short_name"]
-                    if "country" in address_component["types"]:
-                        coordinates_data["country"] = address_component["short_name"]
+        if reverse_location is not None:
+            if "address_components" in reverse_location.raw:
+                for address_component in reverse_location.raw["address_components"]:
+                    if "types" in address_component:
+                        if "administrative_area_level_2" in address_component["types"]:
+                            coordinates_data["admn_lvl_2"] = address_component["short_name"]
+                        if "locality" in address_component["types"]:
+                            coordinates_data["locality"] = address_component["long_name"]
+                        if "country" in address_component["types"]:
+                            coordinates_data["country"] = address_component["short_name"]
+        else:
+            self.logger.error("Could not map the reverse location for %s, %s" % (lat, lng))
+
         return coordinates_data
 
     def query_maxmind_location(self, target_ip):
