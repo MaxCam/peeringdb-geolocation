@@ -1,5 +1,5 @@
 # coding=latin-1
-import random, sys, logging
+import random, sys, logging, time, collections
 from ujson import dumps, loads
 from geopy import distance
 from geopy import Point
@@ -9,7 +9,10 @@ from ripe.atlas.cousteau import (
   Ping,
   AtlasCreateRequest,
   AtlasSource,
-  AtlasStream
+  AtlasStream,
+  AtlasResultsRequest,
+  AtlasRequest,
+  MeasurementRequest
 )
 from geopy import geocoders
 from ripe.atlas.cousteau.source import MalFormattedSource
@@ -49,6 +52,20 @@ class Atlas:
                 if args[0]["prb_id"] not in self.ping_rtts:
                     self.ping_rtts[args[0]["prb_id"]] = list()
                 self.ping_rtts[args[0]["prb_id"]].append(rtt)
+
+    def parse_results(self, result):
+        """
+        Function that will be called every time we receive a new result.
+        :param result: The result of the ping measurement encoded in JSON format
+        """
+        for reply in result:
+            if "result" in reply:
+                for packet in reply["result"]:
+                    if "rtt" in packet:
+                        rtt = packet["rtt"]
+                        if reply["prb_id"] not in self.ping_rtts:
+                            self.ping_rtts[reply["prb_id"]] = list()
+                        self.ping_rtts[reply["prb_id"]].append(rtt)
 
     @staticmethod
     def select_probes_in_asn(target_asn):
@@ -152,21 +169,32 @@ class Atlas:
                     sys.exit(-1)
                 else:
                     measurement_id = response["measurements"][0]
+                    url_path = "/api/v2/measurements/7900469/"
 
-                    atlas_stream = AtlasStream()
-                    atlas_stream.connect()
-                    # Measurement results
-                    channel = "atlas_result"
-                    # Bind function we want to run with every result message received
-                    atlas_stream.bind_channel(channel, self.on_result_response)
-                    stream_parameters = {"msm": measurement_id}
-                    atlas_stream.start_stream(stream_type="result", **stream_parameters)
+                    measurement_is_active = True
+                    minutes_passed = 0
+                    while measurement_is_active is True and minutes_passed < 10:
+                        time.sleep(60)
+                        minutes_passed += 1
+                        request = AtlasRequest(**{"url_path": url_path})
+                        result = collections.namedtuple('Result', 'success response')
+                        (is_success, response) = request.get()
+                        if not is_success:
+                            self.logger.error("Unsuccessful API request for measurement ID %s", measurement_id)
+                            break
 
-                    # Timeout all subscriptions after 120 secs. Leave seconds empty for no timeout.
-                    # Make sure you have this line after you start *all* your streams
-                    atlas_stream.timeout(seconds=120)
-                    # Shut down everything
-                    atlas_stream.disconnect()
+                        status = response["status"]["name"]
+                        if status == "Stopped":
+                            kwargs = {
+                                "msm_id": measurement_id
+                            }
+
+                            is_success, results = AtlasResultsRequest(**kwargs).create()
+
+                            if is_success:
+                                self.parse_results(results)
+                            break
+
             except MalFormattedSource, e:
                 self.logger.critical("Unable to create RIPE Atlas measurement. Error: %s" % str(e))
                 sys.exit(-1)
@@ -174,4 +202,4 @@ class Atlas:
                 self.logger.critical("The RIPE Atlas API returned a malformatted measurement reply.")
                 sys.exit(-1)
 
-        return  self.ping_rtts
+        return self.ping_rtts
