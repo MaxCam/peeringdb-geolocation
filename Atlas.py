@@ -169,11 +169,11 @@ class Atlas:
                     sys.exit(-1)
                 else:
                     measurement_id = response["measurements"][0]
-                    url_path = "/api/v2/measurements/7900469/"
+                    url_path = "/api/v2/measurements/%s/" % measurement_id
 
                     measurement_is_active = True
                     minutes_passed = 0
-                    while measurement_is_active is True and minutes_passed < 10:
+                    while measurement_is_active is True:
                         time.sleep(60)
                         minutes_passed += 1
                         request = AtlasRequest(**{"url_path": url_path})
@@ -184,7 +184,8 @@ class Atlas:
                             break
 
                         status = response["status"]["name"]
-                        if status == "Stopped":
+                        if status == "Stopped" or minutes_passed > 3:
+                            measurement_is_active = Fasle
                             kwargs = {
                                 "msm_id": measurement_id
                             }
@@ -193,7 +194,7 @@ class Atlas:
 
                             if is_success:
                                 self.parse_results(results)
-                            break
+
 
             except MalFormattedSource, e:
                 self.logger.critical("Unable to create RIPE Atlas measurement. Error: %s" % str(e))
