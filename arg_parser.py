@@ -22,7 +22,7 @@ def read_presence_data(presence_file):
             with open(presence_file) as fin:
                 for line in fin:
                     if not line.startswith("#"):
-                        lf = line.strip().split()
+                        lf = line.strip().split("\t")
                         if len(lf) > 2: # expected format: ASN<tab>City<tab>Country [possible comment]
                             asn = int(lf[0])
                             if asn not in extra_locations:
