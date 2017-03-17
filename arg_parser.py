@@ -112,7 +112,7 @@ def read_as_relationships(relationships_file):
                 line = line.strip()
                 if not line.startswith("#"):
                     lf = line.split("|")
-                    if len(lf) == 4:
+                    if len(lf) >= 3:
                         try:
                             as_link = "%s %s" % (lf[0], lf[1])
                             as_relationships[as_link] = int(lf[2])
@@ -137,10 +137,13 @@ def validate_output_file(output_file):
     :return:
     """
     already_geolocated = set()
+    dirname = os.path.dirname(output_file)
+    if dirname == "":
+        output_file = "./" + output_file
     # Read the provided presence AS data
     if not os.access(os.path.dirname(output_file), os.W_OK):
         logging.critical("The programe does not have write permissions to the output file location `%s` "
-                         "provided by the -o/--output argument. " % args.output)
+                         "provided by the -o/--output argument. " % output_file)
         sys.exit(-1)
     elif os.path.isfile(output_file):
         try:
