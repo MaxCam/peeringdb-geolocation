@@ -174,8 +174,8 @@ class Atlas:
                     measurement_is_active = True
                     minutes_passed = 0
                     while measurement_is_active is True:
-                        time.sleep(60)
-                        minutes_passed += 1
+                        time.sleep(30)
+                        minutes_passed += 0.5
                         request = AtlasRequest(**{"url_path": url_path})
                         result = collections.namedtuple('Result', 'success response')
                         (is_success, response) = request.get()
@@ -184,8 +184,8 @@ class Atlas:
                             break
 
                         status = response["status"]["name"]
-                        if status == "Stopped" or minutes_passed > 3:
-                            measurement_is_active = Fasle
+                        if status == "Stopped" or minutes_passed > 2:
+                            measurement_is_active = False
                             kwargs = {
                                 "msm_id": measurement_id
                             }
