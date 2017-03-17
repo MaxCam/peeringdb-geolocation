@@ -23,12 +23,9 @@ but DNS-based geolocation requires knowledge of the naming conventions,
 DNS names may not be updated when interfaces change location [4], 
 and it's not applicable for IP addresses that do not have reverse DNS records or for reverse DNS records without geolocation hints.
 
-RTT based geolocation informed through PeeringDB facilities and IXP presence data
-
 ## References
 
-[1] Poese, Ingmar, et al. "IP geolocation databases: Unreliable?." ACM SIGCOMM Computer Communication Review 41.2 (2011): 53-56.
-[2] Shavitt, Yuval, and Noa Zilberman. "A geolocation databases study." IEEE Journal on Selected Areas in Communications 29.10 (2011): 2044-2056.
-[3] N. Spring, R. Mahajan, and D. Wetherall. Measuring ISP topologies with Rocketfuel. ACM SIGCOMM conference,
-2002.
+[1] Poese, Ingmar, et al. "IP geolocation databases: Unreliable?." ACM SIGCOMM Computer Communication Review 41.2 (2011): 53-56.  
+[2] Shavitt, Yuval, and Noa Zilberman. "A geolocation databases study." IEEE Journal on Selected Areas in Communications 29.10 (2011): 2044-2056.  
+[3] N. Spring, R. Mahajan, and D. Wetherall. Measuring ISP topologies with Rocketfuel. ACM SIGCOMM conference, 2002.  
 [4] M. Zhang, Y. Ruan, V. Pai, and J. Rexford. How DNS misnaming distorts Internet topology mapping. In Proc. of USENIX Annual Technical Conference, 2006.
