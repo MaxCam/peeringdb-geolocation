@@ -169,31 +169,21 @@ class Atlas:
                     sys.exit(-1)
                 else:
                     measurement_id = response["measurements"][0]
-                    url_path = "/api/v2/measurements/%s/" % measurement_id
 
-                    measurement_is_active = True
-                    minutes_passed = 0
-                    while measurement_is_active is True:
-                        time.sleep(30)
-                        minutes_passed += 0.5
-                        request = AtlasRequest(**{"url_path": url_path})
-                        result = collections.namedtuple('Result', 'success response')
-                        (is_success, response) = request.get()
-                        if not is_success:
-                            self.logger.error("Unsuccessful API request for measurement ID %s", measurement_id)
-                            break
+                    atlas_stream = AtlasStream()
+                    atlas_stream.connect()
+                    # Measurement results
+                    channel = "atlas_result"
+                    # Bind function we want to run with every result message received
+                    atlas_stream.bind_channel(channel, self.on_result_response)
+                    stream_parameters = {"msm": measurement_id}
+                    atlas_stream.start_stream(stream_type="result", **stream_parameters)
 
-                        status = response["status"]["name"]
-                        if status == "Stopped" or minutes_passed > 2:
-                            measurement_is_active = False
-                            kwargs = {
-                                "msm_id": measurement_id
-                            }
-
-                            is_success, results = AtlasResultsRequest(**kwargs).create()
-
-                            if is_success:
-                                self.parse_results(results)
+                    # Timeout all subscriptions after 120 secs. Leave seconds empty for no timeout.
+                    # Make sure you have this line after you start *all* your streams
+                    atlas_stream.timeout(seconds=120)
+                    # Shut down everything
+                    atlas_stream.disconnect()
 
 
             except MalFormattedSource, e:
