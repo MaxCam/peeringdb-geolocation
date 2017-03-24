@@ -39,6 +39,9 @@ class Atlas:
         self.logger = logging.getLogger("Atlas")
         self.ATLAS_API_KEY = atlas_key
         self.ping_rtts = dict()
+        self.asn_probes = dict()
+        self.country_probes = dict()
+        self.city_probes = dict()
 
     def on_result_response(self, *args):
         """
@@ -67,6 +70,41 @@ class Atlas:
                             self.ping_rtts[reply["prb_id"]] = list()
                         self.ping_rtts[reply["prb_id"]].append(rtt)
 
+    def collect_active_probes(self):
+        """
+        Compiles two dictionaries of active probes per ASN and per country
+        :return:
+        """
+        filters = {"status": 1}
+        probes = ProbeRequest(**filters)
+        for probe in probes:
+            if probe["geometry"] is not None and probe["asn_v4"] is not None:
+                # Compile a set of active probes per ASN
+                if probe["asn_v4"] not in self.asn_probes:
+                    self.asn_probes[probe["asn_v4"]] = set()
+                self.asn_probes[probe["asn_v4"]].add(
+                    Probe(
+                        probe["id"],
+                        probe["asn_v4"],
+                        probe["geometry"]["coordinates"][1],
+                        probe["geometry"]["coordinates"][0],
+                        probe["country_code"]
+                    )
+                )
+                # Compile a set of active probes
+                if probe["geometry"]["type"] == "Point":
+                    if probe["country_code"] not in self.country_probes:
+                        self.country_probes[probe["country_code"]] = set()
+                    self.country_probes[probe["country_code"]].add(
+                        Probe(
+                            probe["id"],
+                            probe["asn_v4"],
+                            probe["geometry"]["coordinates"][1],
+                            probe["geometry"]["coordinates"][0],
+                            probe["country_code"]
+                        )
+                    )
+
     @staticmethod
     def select_probes_in_asn(target_asn):
         """
@@ -91,6 +129,11 @@ class Atlas:
 
         return candidate_probes
 
+    def calculate_points_distance(self, p1_lng, p1_lat, p2_lng, p2_lat):
+        p1 = Point("%s %s" % (p1_lng, p1_lat))
+        p2 = Point("%s %s" % (p2_lng, p2_lat))
+        result = distance.distance(p1, p2).kilometers
+        return result
 
     def select_probes_in_location(self, lat, lng, country, radius):
         """
@@ -103,29 +146,35 @@ class Atlas:
         """
         candidate_probes = set()
 
-        filters = {"country_code": country, "status": 1}
-        probes = ProbeRequest(**filters)
-
-        try:
-            for probe in probes:
-                if probe["asn_v4"] is not None and probe["geometry"]["type"] == "Point":
-                    probe_lon = probe["geometry"]["coordinates"][0]
-                    probe_lat = probe["geometry"]["coordinates"][1]
-                    p1 = Point("%s %s" % (lng, lat))
-                    p2 = Point("%s %s" % (probe_lon, probe_lat))
-                    result = distance.distance(p1, p2).kilometers
-                    if result <= radius:
-                        candidate_probes.add(
-                            Probe(
-                                probe["id"],
-                                probe["asn_v4"],
-                                probe["geometry"]["coordinates"][1],
-                                probe["geometry"]["coordinates"][0],
-                                probe["country_code"]
+        if len(self.country_probes) == 0:
+            filters = {"country_code": country, "status": 1}
+            probes = ProbeRequest(**filters)
+            try:
+                for probe in probes:
+                    if probe["asn_v4"] is not None and probe["geometry"]["type"] == "Point":
+                        probe_lon = probe["geometry"]["coordinates"][0]
+                        probe_lat = probe["geometry"]["coordinates"][1]
+                        result = self.calculate_points_distance(lng, lat, probe_lon, probe_lat)
+                        if result <= radius:
+                            candidate_probes.add(
+                                Probe(
+                                    probe["id"],
+                                    probe["asn_v4"],
+                                    probe["geometry"]["coordinates"][1],
+                                    probe["geometry"]["coordinates"][0],
+                                    probe["country_code"]
+                                )
                             )
-                        )
-        except APIResponseError, e:
-            self.logger.error("RIPE Atlas API request failed when requesting probes for coordinates: %s,%s" % (lat, lng))
+            except APIResponseError, e:
+                self.logger.error(
+                    "RIPE Atlas API request failed when requesting probes for coordinates: %s,%s" % (lat, lng))
+        elif country in self.country_probes:
+            probes = self.country_probes[country]
+            for probe in probes:
+                result = self.calculate_points_distance(lng, lat, probe.lng, probe.lat)
+                if result <= radius:
+                    candidate_probes.add(probe)
+
         return candidate_probes
 
     def ping_measurement(self, af, target_ip, description, packets_num, probes_list):
