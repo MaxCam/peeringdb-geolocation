@@ -2,7 +2,7 @@ import logging
 import gzip
 import sys
 import geopy
-import geoip2.database
+import geoip2.database, geoip2.errors
 from maxminddb.errors import InvalidDatabaseError
 
 
@@ -190,42 +190,70 @@ class GeoEncoder(object):
 
         return coordinates_data
 
-    def query_maxmind_location(self, target_ip):
+    def get_largest_cities(self):
         """
-        Returns the location of an IP address (city name and country 2-letter ISO code) based on Maxmind's Ddtabase
-        :param target_ip: the IP to geolocate
+        Returns the cities with the largest population per country
+        :return: A dictionary with the name of the largest city per country 2-letter ISO code
+        """
+        country_max_pop = dict()
+        country_largest_city = dict()
+        try:
+            with gzip.open(self.worldcities_pop) as fin:
+                for line in fin:
+                    lf = line.strip().split(",")
+                    if len(lf) > 0:
+                        try:
+                            country = lf[0]
+                            city = lf[1].lower()
+                            population = int(lf[4])
+                            if country not in country_max_pop:
+                                country_max_pop[country] = 0
+                                country_largest_city[country] = 0
+
+                            if population > country_max_pop[country]:
+                                country_max_pop[country] = population
+                                country_largest_city[country] = city
+                        except ValueError:
+                            # If we have no data about the city's population simply move on to next city
+                            continue
+        except IOError, e:
+            self.logger.error("Could not read file `%s`. %s" % (self.worldcities_pop, str(e)))
+        return country_largest_city
+
+    def query_maxmind_batch(self, target_ips):
+        """
+        Returns the location for each IP in a set of IPs (city name and country 2-letter ISO code)
+        based on Maxmind's Database
+        :param target_ips: the set IP to geolocate
         :return: a string with the location of the IP
         """
-        maxmind_location = False
+        country_largest_city = self.get_largest_cities()
+        maxmind_locations = dict()
+
         if self.maxmind_reader is not False:
-            response = self.maxmind_reader.city(target_ip)
-            if response.country is not None:
-                maxmind_city = response.city.name
-                if maxmind_city is not None:
-                    maxmind_city = maxmind_city.lower()
-                maxmind_country = response.country.iso_code
+            for target_ip in target_ips:
+                try:
+                    response = self.maxmind_reader.city(target_ip)
+                    if response.country is not None:
+                        maxmind_city = response.city.name
+                        if maxmind_city is not None:
+                            maxmind_city = maxmind_city.lower()
+                        maxmind_country = response.country.iso_code
 
-                # if maxmind indicates a country but the city is 'none', find the city with the largest population in that country
-                if str(maxmind_city) == "None" and str(maxmind_country) != "None":
-                    maxmind_country = maxmind_country.lower()
-                    try:
-                        with gzip.open(self.worldcities_pop) as fin:
-                            maxmind_city = None
-                            largest_city_pop = 0
-                            for line in fin:
-                                lf = line.strip().split(",")
-                                if len(lf) > 0 and maxmind_country == lf[0]:
-                                    try:
-                                        if int(lf[4]) > largest_city_pop:
-                                            largest_city_pop = int(lf[4])
-                                            maxmind_city = lf[1].lower()
-                                    except ValueError:
-                                        # If we have no data about the city's population simly move on to next city
-                                        continue
-                    except IOError, e:
-                        self.logger.error("Could not read file `%s`. %s" % (self.worldcities_pop, str(e)))
+                        # if maxmind indicates a country but the city is 'none',
+                        # find the city with the largest population in that country
+                        if str(maxmind_city) == "None" and str(maxmind_country) != "None":
+                            maxmind_country = maxmind_country.lower()
+                            if maxmind_country in country_largest_city:
+                                maxmind_city = country_largest_city[maxmind_country]
 
-                if str(maxmind_city) != "None" and str(maxmind_country) != "None":
-                    maxmind_location = "%s|%s" % (maxmind_city, maxmind_country)
+                        if str(maxmind_city) != "None" and str(maxmind_country) != "None":
+                            maxmind_locations[target_ip] = "%s|%s" % (maxmind_city, maxmind_country)
+                except geoip2.errors.AddressNotFoundError:
+                    self.logger.warning("IP %s was not found in Maxmind GeoIP DB." % target_ip)
+                    continue
+                except ValueError:
+                    self.logger.warning("Skipping value '%s' which doesn't appear to be a valid IP address." % target_ip)
+                    continue
 
-        return maxmind_location
+        return maxmind_locations
