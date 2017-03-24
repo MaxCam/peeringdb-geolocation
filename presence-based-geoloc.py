@@ -12,7 +12,7 @@ import ConfigParser
 import PeeringDB
 from Atlas import Atlas
 from GeoEncoder import GeoEncoder
-import arg_parser, geoip2
+import arg_parser
 
 
 def read_config():
@@ -93,18 +93,20 @@ target_ips, asndb, as_relationships, extra_locations, already_geolocated_ips, ou
 
 # Group the geo-location targets per ASN
 geolocation_targets = dict()
-maxmind_locations = dict()
 asn_locations = dict()
 
 siblings = {
-    16625: 20940,
+    #16625: 20940,
     702: 701
 }
 
 counter = 0
+
+print "Querying Maxmind for IP locations"
+maxmind_locations = geo_encoder.query_maxmind_batch(target_ips ^ already_geolocated_ips)
+
 for target_ip in target_ips:
     counter += 1
-    print "%s. Querying Maxmind for IP %s" % (counter,target_ip)
     if target_ip in already_geolocated_ips:
         logger.info("Skipping IP %s because it is already geolocated." % target_ip)
     else:
@@ -123,15 +125,12 @@ for target_ip in target_ips:
         geolocation_targets[target_asn].add(target_ip)
 
         # Add the location provided by MaxMind in the list of possible locations in which we should ping
-        try:
-            maxmind_location = geo_encoder.query_maxmind_location(target_ip)
-            if maxmind_location is not False:
-                maxmind_locations[target_ip] = maxmind_location
-                asn_locations[target_asn].add(maxmind_location)
-        except geoip2.errors.AddressNotFoundError:
-            logger.warning("IP %s was not found in Maxmind GeoIP DB." % target_ip)
-            continue
+        if target_ip in maxmind_locations:
+            asn_locations[target_asn].add(maxmind_locations[target_ip])
 
+
+print "Collect the active Atlas probes per ASN and per country"
+atlas_api.collect_active_probes()
 
 candidate_probes = dict()
 probes_facility = dict()
@@ -174,12 +173,16 @@ for target_asn in geolocation_targets:
             if gmap_location not in candidate_probes:
                 print "Getting probes for location: %s" % gmap_location
                 # Get the probes in this location
-                available_probes = atlas_api.select_probes_in_location(
-                    location_data["lat"],
-                    location_data["lng"],
-                    location_data["country"],
-                    40
-                )
+                if gmap_location in atlas_api.city_probes:
+                    available_probes = atlas_api.city_probes[gmap_location]
+                else:
+                    available_probes = atlas_api.select_probes_in_location(
+                        location_data["lat"],
+                        location_data["lng"],
+                        location_data["country"],
+                        40
+                    )
+                    atlas_api.city_probes[gmap_location] = available_probes
 
                 if len(available_probes) > 0:
                     available_locations.add(gmap_location)
@@ -198,9 +201,10 @@ for target_asn in geolocation_targets:
             print "Warning: Could not find the coordinates for: %s" % location
 
     # Get the probes in the target ASN
-    for probe_object in atlas_api.select_probes_in_asn(target_asn):
-        target_asn_probes.add(probe_object.id)
-        probe_objects[probe_object.id] = probe_object
+    if target_asn in atlas_api.asn_probes:
+        for probe_object in atlas_api.asn_probes[target_asn]:
+            target_asn_probes.add(probe_object.id)
+            probe_objects[probe_object.id] = probe_object
 
     # Get the probes in ASes that are neighboring to the target ASN
     neighboring_probes = find_neighboring_probes(probe_objects.values(), target_asn, as_relationships)
@@ -210,7 +214,7 @@ for target_asn in geolocation_targets:
     for target_ip in  geolocation_targets[target_asn]:
 
         logger.info("Running geolocation for IP %s in AS%s" % (target_ip, target_asn))
-        #TODO Order countries by number of presences to find the main country from which we start the measurements
+        # TODO Order countries by number of presences to find the main country from which we start the measurements
 
         '''
         Step 4: Sample the available Atlas probes in the candidate cities to meet the querying budget restrictions
@@ -227,7 +231,6 @@ for target_asn in geolocation_targets:
             for probe_id in candidate_probes[location]:
                 if probe_id in neighboring_probes:
                     probe_asn = probe_objects[probe_id].asn
-                    print probe_asn
                     if probe_asn not in selected_neighboring_asns:
                         selected_neighboring_probes.add(probe_id)
                         selected_neighboring_asns.add(probe_asn)
@@ -254,17 +257,17 @@ for target_asn in geolocation_targets:
                     candidate_asns = dict()
                     selected_probes |= set(random.sample(candidate_probes[location], (probes_num - len(selected_neighboring_probes))))
         selected_probes |= target_asn_probes
-        for location in candidate_probes:
-            print "%s: %s" % (location, len(candidate_probes[location]))
         print "Total number of selected probes: %s" % len(selected_probes)
         '''
         Step 5: Run the RTT-based geolocation
         '''
+        chunk_size = 100 # TODO put chunk size in configuration file
         if len(selected_probes) > 0:
             prv_min_rtt = sys.maxint
             closest_probe = 0
-            probes_slices = slice_selected_probes(list(selected_probes), 50)
-            for probes_slice in probes_slices:
+            probes_slices = slice_selected_probes(list(sorted(selected_probes)), chunk_size)
+            for index, probes_slice in enumerate(probes_slices):
+                print "Querying probes %s - %s" % (1*(index+1), chunk_size*(index+1))
                 af = ip_version
                 description="Presence-informed RTT geolocation"
 
@@ -276,7 +279,7 @@ for target_asn in geolocation_targets:
                         prv_min_rtt = probe_min_rtt
                         closest_probe = probe_id
                 # If we found a probe with very low RTT we don't need to run all the pings
-                if prv_min_rtt < 1:
+                if prv_min_rtt < 2:
                     break
 
             if closest_probe == 0:
